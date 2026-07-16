@@ -10,33 +10,32 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #0c0a09; color: #e7e5e4; }
         .demo-banner {
-            background: #6c5ce7;
-            color: #fff;
-            text-align: center;
-            padding: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 1px;
+            background: #6c5ce7; color: #fff; text-align: center;
+            padding: 12px; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;
         }
         .demo-banner a { color: #fff; }
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 60px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: relative; z-index: 10;
         }
         .nav-brand { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #f97316; }
         .nav-links { display: flex; gap: 32px; }
         .nav-links a { color: #a8a29e; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.3s; }
         .nav-links a:hover { color: #f97316; }
         .hero {
-            min-height: 85vh;
-            display: flex; align-items: center; justify-content: center; text-align: center;
-            background: linear-gradient(180deg, rgba(249,115,22,0.08) 0%, transparent 60%);
-            padding: 100px 20px 60px;
+            min-height: 85vh; display: flex; align-items: center; justify-content: center; text-align: center;
+            padding: 100px 20px 60px; position: relative; overflow: hidden;
         }
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1400&h=900&fit=crop') center/cover;
+            filter: brightness(0.3); z-index: 0;
+        }
+        .hero-content { position: relative; z-index: 2; }
         .hero h1 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            line-height: 1.1; margin-bottom: 20px;
+            font-size: clamp(2.5rem, 6vw, 5rem); line-height: 1.1; margin-bottom: 20px;
         }
         .hero h1 span { color: #f97316; }
         .hero p { color: #a8a29e; font-size: 1.1rem; max-width: 500px; margin: 0 auto 36px; line-height: 1.7; }
@@ -46,18 +45,21 @@
         }
         .btn-orange { background: #f97316; color: #fff; }
         .btn-orange:hover { background: #ea580c; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(249,115,22,0.3); }
-        .btn-outline { border: 1px solid rgba(255,255,255,0.15); color: #fff; margin-left: 12px; }
+        .btn-outline { border: 1px solid rgba(255,255,255,0.2); color: #fff; margin-left: 12px; }
         .section { padding: 80px 60px; max-width: 1000px; margin: 0 auto; }
         .section-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 40px; text-align: center; }
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
         .menu-card {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px; padding: 28px; transition: all 0.3s;
+            border-radius: 16px; overflow: hidden; transition: all 0.3s;
         }
         .menu-card:hover { border-color: rgba(249,115,22,0.3); transform: translateY(-4px); }
-        .menu-emoji { font-size: 2.5rem; margin-bottom: 12px; }
-        .menu-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
-        .menu-card p { color: #a8a29e; font-size: 0.85rem; line-height: 1.6; margin-bottom: 12px; }
+        .menu-img {
+            height: 200px; width: 100%; object-fit: cover;
+        }
+        .menu-text { padding: 24px; }
+        .menu-text h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+        .menu-text p { color: #a8a29e; font-size: 0.85rem; line-height: 1.6; margin-bottom: 12px; }
         .menu-price { color: #f97316; font-weight: 700; font-size: 1.2rem; }
         .hours {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;
@@ -88,7 +90,8 @@
         </div>
     </nav>
     <section class="hero">
-        <div>
+        <div class="hero-bg"></div>
+        <div class="hero-content">
             <h1>Grilled to <span>Perfection</span></h1>
             <p>The best suya, pepper soup, and grilled delicacies in Lagos. Open every evening from 5pm.</p>
             <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27d%20like%20to%20reserve%20a%20table" class="btn btn-orange" target="_blank">Reserve a Table</a>
@@ -99,40 +102,52 @@
         <h2 class="section-title">Our Menu</h2>
         <div class="menu-grid">
             <div class="menu-card">
-                <div class="menu-emoji">🔥</div>
-                <h3>Classic Suya Plate</h3>
-                <p>Spicy grilled beef suya served with onions, tomatoes, and our signature yaji spice.</p>
-                <div class="menu-price">₦3,500</div>
+                <img class="menu-img" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop" alt="Suya Plate" loading="lazy">
+                <div class="menu-text">
+                    <h3>Classic Suya Plate</h3>
+                    <p>Spicy grilled beef suya served with onions, tomatoes, and our signature yaji spice.</p>
+                    <div class="menu-price">₦3,500</div>
+                </div>
             </div>
             <div class="menu-card">
-                <div class="menu-emoji">🍲</div>
-                <h3>Pepper Soup</h3>
-                <p>Hot and spicy catfish pepper soup with fresh herbs and traditional spices.</p>
-                <div class="menu-price">₦4,000</div>
+                <img class="menu-img" src="https://images.unsplash.com/photo-1604152135912-04a022e23696?w=600&h=400&fit=crop" alt="Pepper Soup" loading="lazy">
+                <div class="menu-text">
+                    <h3>Pepper Soup</h3>
+                    <p>Hot and spicy catfish pepper soup with fresh herbs and traditional spices.</p>
+                    <div class="menu-price">₦4,000</div>
+                </div>
             </div>
             <div class="menu-card">
-                <div class="menu-emoji">🍗</div>
-                <h3>Grilled Chicken</h3>
-                <p>Whole chicken marinated in our special sauce and grilled over open flame.</p>
-                <div class="menu-price">₦5,500</div>
+                <img class="menu-img" src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop" alt="Grilled Chicken" loading="lazy">
+                <div class="menu-text">
+                    <h3>Grilled Chicken</h3>
+                    <p>Whole chicken marinated in our special sauce and grilled over open flame.</p>
+                    <div class="menu-price">₦5,500</div>
+                </div>
             </div>
             <div class="menu-card">
-                <div class="menu-emoji">🍢</div>
-                <h3>Mixed Grill Platter</h3>
-                <p>Assorted grilled meats for 2-3 people. Perfect for sharing.</p>
-                <div class="menu-price">₦12,000</div>
+                <img class="menu-img" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&h=400&fit=crop" alt="Mixed Grill" loading="lazy">
+                <div class="menu-text">
+                    <h3>Mixed Grill Platter</h3>
+                    <p>Assorted grilled meats for 2-3 people. Perfect for sharing.</p>
+                    <div class="menu-price">₦12,000</div>
+                </div>
             </div>
             <div class="menu-card">
-                <div class="menu-emoji">🍺</div>
-                <h3>Cold Drinks</h3>
-                <p>Chilled beers, soft drinks, and fresh zobo to wash it all down.</p>
-                <div class="menu-price">₦500+</div>
+                <img class="menu-img" src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&h=400&fit=crop" alt="Cold Drinks" loading="lazy">
+                <div class="menu-text">
+                    <h3>Cold Drinks</h3>
+                    <p>Chilled beers, soft drinks, and fresh zobo to wash it all down.</p>
+                    <div class="menu-price">₦500+</div>
+                </div>
             </div>
             <div class="menu-card">
-                <div class="menu-emoji">🥗</div>
-                <h3>Side Salads</h3>
-                <p>Fresh garden salad or coleslaw to complement your meal.</p>
-                <div class="menu-price">₦1,500</div>
+                <img class="menu-img" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop" alt="Salads" loading="lazy">
+                <div class="menu-text">
+                    <h3>Side Salads</h3>
+                    <p>Fresh garden salad or coleslaw to complement your meal.</p>
+                    <div class="menu-price">₦1,500</div>
+                </div>
             </div>
         </div>
     </section>

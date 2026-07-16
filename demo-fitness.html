@@ -17,6 +17,7 @@
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 60px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: relative; z-index: 10;
         }
         .nav-brand {
             font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
@@ -31,17 +32,20 @@
         }
         .hero {
             min-height: 90vh; display: flex; align-items: center; justify-content: center;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(239,68,68,0.1) 0%, transparent 50%);
-            padding: 100px 20px;
+            text-align: center; position: relative; overflow: hidden; padding: 100px 20px;
         }
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&h=900&fit=crop') center/cover;
+            filter: brightness(0.25); z-index: 0;
+        }
+        .hero-content { position: relative; z-index: 2; }
         .hero h1 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(3.5rem, 10vw, 8rem);
-            letter-spacing: 4px; line-height: 0.95; margin-bottom: 20px;
+            font-size: clamp(3.5rem, 10vw, 8rem); letter-spacing: 4px; line-height: 0.95; margin-bottom: 20px;
         }
         .hero h1 span { color: #ef4444; }
-        .hero p { color: #737373; font-size: 1.1rem; max-width: 450px; margin: 0 auto 36px; line-height: 1.7; }
+        .hero p { color: #a3a3a3; font-size: 1.1rem; max-width: 450px; margin: 0 auto 36px; line-height: 1.7; }
         .btn-red { background: #ef4444; color: #fff; padding: 16px 40px; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; display: inline-block; }
         .btn-red:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(239,68,68,0.3); }
         .section { padding: 80px 60px; max-width: 1000px; margin: 0 auto; }
@@ -52,22 +56,26 @@
         .section-title span { color: #ef4444; }
         .classes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .class-card {
-            background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.02));
-            border: 1px solid rgba(239,68,68,0.15); border-radius: 16px;
-            padding: 32px; text-align: center; transition: all 0.3s;
+            border-radius: 16px; overflow: hidden; transition: all 0.3s; position: relative;
         }
-        .class-card:hover { transform: translateY(-6px); border-color: rgba(239,68,68,0.4); }
-        .class-icon { font-size: 2.5rem; margin-bottom: 16px; }
-        .class-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
-        .class-card p { color: #737373; font-size: 0.85rem; line-height: 1.6; }
+        .class-card:hover { transform: translateY(-6px); }
+        .class-img {
+            width: 100%; height: 280px; object-fit: cover; display: block;
+        }
+        .class-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 24px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+        }
+        .class-overlay h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+        .class-overlay p { color: #a3a3a3; font-size: 0.8rem; line-height: 1.5; }
         .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
         .price-card {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px; padding: 36px; text-align: center; transition: all 0.3s;
+            border-radius: 16px; padding: 36px; text-align: center; transition: all 0.3s; position: relative;
         }
         .price-card.popular {
             border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.05);
-            position: relative;
         }
         .price-card.popular::before {
             content: 'BEST VALUE'; position: absolute; top: -12px; left: 50%;
@@ -108,7 +116,8 @@
         </div>
     </nav>
     <section class="hero">
-        <div>
+        <div class="hero-bg"></div>
+        <div class="hero-content">
             <h1>NO <span>PAIN</span><br>NO <span>GAIN</span></h1>
             <p>Lagos' premier fitness studio. Transform your body, elevate your mind. First session free.</p>
             <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27d%20like%20to%20sign%20up%20for%20a%20class" class="btn-red" target="_blank">Start Free Trial</a>
@@ -118,24 +127,32 @@
         <h2 class="section-title">Our <span>Classes</span></h2>
         <div class="classes-grid">
             <div class="class-card">
-                <div class="class-icon">🏋️</div>
-                <h3>Strength</h3>
-                <p>Build muscle and increase your power with guided weight training sessions.</p>
+                <img class="class-img" src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=500&h=600&fit=crop" alt="Strength Training" loading="lazy">
+                <div class="class-overlay">
+                    <h3>Strength</h3>
+                    <p>Build muscle and increase your power with guided weight training sessions.</p>
+                </div>
             </div>
             <div class="class-card">
-                <div class="class-icon">🥊</div>
-                <h3>Boxing</h3>
-                <p>High-energy boxing workouts that burn calories and build confidence.</p>
+                <img class="class-img" src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=500&h=600&fit=crop" alt="Boxing" loading="lazy">
+                <div class="class-overlay">
+                    <h3>Boxing</h3>
+                    <p>High-energy boxing workouts that burn calories and build confidence.</p>
+                </div>
             </div>
             <div class="class-card">
-                <div class="class-icon">🧘</div>
-                <h3>Yoga</h3>
-                <p>Find your balance and flexibility with our expert-led yoga sessions.</p>
+                <img class="class-img" src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&h=600&fit=crop" alt="Yoga" loading="lazy">
+                <div class="class-overlay">
+                    <h3>Yoga</h3>
+                    <p>Find your balance and flexibility with our expert-led yoga sessions.</p>
+                </div>
             </div>
             <div class="class-card">
-                <div class class="class-icon">🏃</div>
-                <h3>HIIT</h3>
-                <p>Maximum burn in minimum time. Fast-paced interval training.</p>
+                <img class="class-img" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500&h=600&fit=crop" alt="HIIT" loading="lazy">
+                <div class="class-overlay">
+                    <h3>HIIT</h3>
+                    <p>Maximum burn in minimum time. Fast-paced interval training.</p>
+                </div>
             </div>
         </div>
     </section>

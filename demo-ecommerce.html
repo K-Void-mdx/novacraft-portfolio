@@ -26,24 +26,34 @@
         .nav-links a { color: #555; text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
         .nav-links a:hover { color: #000; }
         .hero {
-            padding: 80px 60px; text-align: center;
-            background: linear-gradient(180deg, #f5f0eb 0%, #fafafa 100%);
+            position: relative; overflow: hidden;
+        }
+        .hero-grid {
+            display: grid; grid-template-columns: 1fr 1fr; min-height: 500px;
+        }
+        .hero-text {
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 60px 60px 60px 80px;
+        }
+        .hero-img {
+            width: 100%; height: 100%; object-fit: cover;
         }
         .hero-badge {
             display: inline-block; padding: 6px 16px; border: 1px solid #ccc;
             border-radius: 50px; font-size: 0.75rem; font-weight: 600;
             text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; color: #666;
+            width: fit-content;
         }
-        .hero h1 {
+        .hero-text h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700; line-height: 1.2; margin-bottom: 16px;
+            font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; line-height: 1.15; margin-bottom: 16px;
         }
-        .hero p { color: #888; font-size: 1rem; margin-bottom: 32px; }
+        .hero-text p { color: #888; font-size: 1rem; margin-bottom: 32px; }
         .btn-dark {
             display: inline-block; padding: 14px 36px; background: #1a1a1a; color: #fff;
             border: none; border-radius: 8px; font-weight: 600; text-decoration: none;
             font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s;
+            width: fit-content;
         }
         .btn-dark:hover { background: #333; transform: translateY(-2px); }
         .section { padding: 60px 60px; max-width: 1100px; margin: 0 auto; }
@@ -57,14 +67,13 @@
         }
         .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
         .product-img {
-            height: 280px; display: flex; align-items: center; justify-content: center;
-            font-size: 4rem; background: #f5f5f5;
+            width: 100%; height: 300px; object-fit: cover; display: block;
         }
         .product-info { padding: 20px; }
         .product-info h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
         .product-info .brand { color: #999; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .product-info .price { font-size: 1.1rem; font-weight: 700; }
-        .product-info .price old { color: #bbb; font-weight: 400; margin-right: 8px; }
+        .product-info .price old { color: #bbb; font-weight: 400; margin-right: 8px; text-decoration: line-through; }
         .features {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 24px; text-align: center; padding: 60px;
@@ -80,7 +89,8 @@
         @media (max-width: 768px) {
             nav { padding: 16px 20px; }
             .section { padding: 40px 20px; }
-            .hero { padding: 60px 20px; }
+            .hero-grid { grid-template-columns: 1fr; }
+            .hero-text { padding: 40px 20px; }
             .nav-links { gap: 16px; }
         }
     </style>
@@ -96,10 +106,15 @@
         </div>
     </nav>
     <section class="hero">
-        <div class="hero-badge">New Collection 2026</div>
-        <h1>Elevate Your<br>Style Game</h1>
-        <p>Premium streetwear and accessories for the modern Nigerian.</p>
-        <a href="#shop" class="btn-dark">Shop Now</a>
+        <div class="hero-grid">
+            <div class="hero-text">
+                <div class="hero-badge">New Collection 2026</div>
+                <h1>Elevate Your Style Game</h1>
+                <p>Premium streetwear and accessories for the modern Nigerian.</p>
+                <a href="#shop" class="btn-dark">Shop Now</a>
+            </div>
+            <img class="hero-img" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=600&fit=crop" alt="Fashion Model" loading="lazy">
+        </div>
     </section>
     <section class="section" id="shop">
         <div class="section-header">
@@ -108,7 +123,7 @@
         </div>
         <div class="products-grid">
             <div class="product-card">
-                <div class="product-img">👕</div>
+                <img class="product-img" src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=600&fit=crop" alt="Premium Oversized Tee" loading="lazy">
                 <div class="product-info">
                     <div class="brand">Velvet Originals</div>
                     <h3>Premium Oversized Tee</h3>
@@ -116,7 +131,7 @@
                 </div>
             </div>
             <div class="product-card">
-                <div class="product-img">👖</div>
+                <img class="product-img" src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&h=600&fit=crop" alt="Denim Cargo Pants" loading="lazy">
                 <div class="product-info">
                     <div class="brand">Velvet Originals</div>
                     <h3>Denim Cargo Pants</h3>
@@ -124,19 +139,19 @@
                 </div>
             </div>
             <div class="product-card">
-                <div class="product-img">🧢</div>
-                <div class="product-info">
-                    <div class="brand">Velvet Accessories</div>
-                    <h3>Structured Cap</h3>
-                    <div class="price">₦5,500</div>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-img">👟</div>
+                <img class="product-img" src="https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=500&h=600&fit=crop" alt="Sneakers" loading="lazy">
                 <div class="product-info">
                     <div class="brand">Velvet Kicks</div>
                     <h3>Urban Runner Sneakers</h3>
                     <div class="price"><old>₦35,000</old> ₦28,000</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <img class="product-img" src="https://images.unsplash.com/photo-1575428652377-a2d80e2277fc?w=500&h=600&fit=crop" alt="Structured Cap" loading="lazy">
+                <div class="product-info">
+                    <div class="brand">Velvet Accessories</div>
+                    <h3>Structured Cap</h3>
+                    <div class="price">₦5,500</div>
                 </div>
             </div>
         </div>
