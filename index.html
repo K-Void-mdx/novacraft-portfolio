@@ -106,11 +106,7 @@
             transform-style: preserve-3d; perspective: 800px;
         }
         .service-card:hover { border-color: rgba(108, 92, 231, 0.3); background: rgba(108, 92, 231, 0.05); }
-        .service-icon {
-            width: 48px; height: 48px; border-radius: 12px;
-            background: rgba(108, 92, 231, 0.15); display: flex; align-items: center;
-            justify-content: center; font-size: 1.3rem; margin-bottom: 20px;
-        }
+        .service-img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
         .service-card h3 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 12px; }
         .service-card p { color: #888; font-size: 0.95rem; line-height: 1.6; }
 
@@ -122,30 +118,13 @@
             transform-style: preserve-3d; perspective: 1000px; cursor: pointer; text-decoration: none; color: inherit; display: block;
         }
         .work-card:hover { transform: translateY(-8px) rotateX(2deg); border-color: rgba(108, 92, 231, 0.4); box-shadow: 0 20px 50px rgba(108, 92, 231, 0.15); }
-        .work-preview {
-            height: 220px; display: flex; align-items: center; justify-content: center;
-            font-size: 3.5rem; position: relative; overflow: hidden; transition: all 0.5s;
+        .work-img {
+            width: 100%; height: 220px; object-fit: cover; display: block; transition: transform 0.5s;
         }
-        .work-card:hover .work-preview { transform: scale(1.05); }
-        .work-preview::after {
-            content: 'VIEW SITE →'; position: absolute; bottom: 0; left: 0; right: 0;
-            padding: 20px; text-align: center; font-size: 0.8rem; font-weight: 700;
-            letter-spacing: 2px; color: #fff;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            opacity: 0; transform: translateY(10px); transition: all 0.3s;
-        }
-        .work-card:hover .work-preview::after { opacity: 1; transform: translateY(0); }
-        .work-preview.bg1 { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
-        .work-preview.bg2 { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
-        .work-preview.bg3 { background: linear-gradient(135deg, #2d1b4e, #1a1a2e, #111); }
+        .work-card:hover .work-img { transform: scale(1.05); }
         .work-info { padding: 24px; }
         .work-info h3 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
         .work-info p { color: #888; font-size: 0.85rem; }
-        .tag {
-            display: inline-block; padding: 4px 10px; border-radius: 6px;
-            font-size: 0.7rem; font-weight: 600; margin-right: 6px; margin-top: 12px;
-            background: rgba(108, 92, 231, 0.15); color: #a29bfe;
-        }
 
         /* FLOATING PARTICLES */
         .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
@@ -240,17 +219,17 @@
         <h2 class="fade-in">Services</h2>
         <div class="services-grid">
             <div class="service-card fade-in">
-                <div class="service-icon">🌐</div>
+                <img class="service-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop" alt="Business Website" loading="lazy">
                 <h3>Business Websites</h3>
                 <p>Professional websites for restaurants, shops, clinics, gyms, and any business that wants to look legit online.</p>
             </div>
             <div class="service-card fade-in fade-in-delay-1">
-                <div class="service-icon">📱</div>
+                <img class="service-img" src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&h=400&fit=crop" alt="Landing Page" loading="lazy">
                 <h3>Landing Pages</h3>
                 <p>Single-page sites built to convert visitors into customers. Perfect for product launches or events.</p>
             </div>
             <div class="service-card fade-in fade-in-delay-2">
-                <div class="service-icon">⚡</div>
+                <img class="service-img" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop" alt="E-Commerce" loading="lazy">
                 <h3>E-Commerce</h3>
                 <p>Online stores where customers can browse and buy your products directly from your website.</p>
             </div>
@@ -262,30 +241,24 @@
         <h2 class="fade-in">Recent Work</h2>
         <div class="work-grid">
             <a href="demo-restaurant.html" class="work-card fade-in" target="_blank">
-                <div class="work-preview bg1">🍽️</div>
+                <img class="work-img" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop" alt="Restaurant Website" loading="lazy">
                 <div class="work-info">
                     <h3>Restaurant Website</h3>
                     <p>Modern restaurant site with menu, reservations, and location map.</p>
-                    <span class="tag">HTML/CSS</span>
-                    <span class="tag">Responsive</span>
                 </div>
             </a>
             <a href="demo-fitness.html" class="work-card fade-in fade-in-delay-1" target="_blank">
-                <div class="work-preview bg2">💪</div>
+                <img class="work-img" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop" alt="Fitness Studio" loading="lazy">
                 <div class="work-info">
                     <h3>Fitness Studio</h3>
                     <p>Clean landing page for a gym with class schedule and pricing.</p>
-                    <span class="tag">JavaScript</span>
-                    <span class="tag">Mobile-First</span>
                 </div>
             </a>
             <a href="demo-ecommerce.html" class="work-card fade-in fade-in-delay-2" target="_blank">
-                <div class="work-preview bg3">🛍️</div>
+                <img class="work-img" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=400&fit=crop" alt="Online Store" loading="lazy">
                 <div class="work-info">
                     <h3>Online Store</h3>
                     <p>E-commerce site for a fashion brand with cart and checkout.</p>
-                    <span class="tag">E-Commerce</span>
-                    <span class="tag">Payments</span>
                 </div>
             </a>
         </div>
