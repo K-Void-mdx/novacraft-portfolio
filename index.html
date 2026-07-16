@@ -297,7 +297,7 @@
         <div class="pricing-grid">
             <div class="price-card fade-in">
                 <h3>Basic</h3>
-                <div class="price">₦35,000</div>
+                <div class="price" data-ng="₦35,000" data-us="$22" data-gb="£18" data-eu="€20" data-gh="GH₵280" data-za="R400" data-ke="KSh3,400">₦35,000</div>
                 <ul class="price-features">
                     <li>Single page website</li>
                     <li>Mobile responsive</li>
@@ -309,7 +309,7 @@
             </div>
             <div class="price-card featured fade-in fade-in-delay-1">
                 <h3>Standard</h3>
-                <div class="price">₦70,000</div>
+                <div class="price" data-ng="₦70,000" data-us="$44" data-gb="£35" data-eu="€40" data-gh="GH₵560" data-za="R800" data-ke="KSh6,800">₦70,000</div>
                 <ul class="price-features">
                     <li>Multi-page website (up to 5)</li>
                     <li>Mobile responsive</li>
@@ -322,7 +322,7 @@
             </div>
             <div class="price-card fade-in fade-in-delay-2">
                 <h3>Premium</h3>
-                <div class="price">₦120,000</div>
+                <div class="price" data-ng="₦120,000" data-us="$75" data-gb="£60" data-eu="€68" data-gh="GH₵960" data-za="R1,380" data-ke="KSh11,600">₦120,000</div>
                 <ul class="price-features">
                     <li>Full business website</li>
                     <li>E-commerce / online store</li>
@@ -365,6 +365,25 @@
         }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // GEO-PRICING
+        const countryToCurrency = {
+            'NG': 'ng', 'US': 'us', 'GB': 'gb', 'IE': 'eu', 'DE': 'eu', 'FR': 'eu',
+            'ES': 'eu', 'IT': 'eu', 'NL': 'eu', 'BE': 'eu', 'AT': 'eu', 'PT': 'eu',
+            'GH': 'gh', 'ZA': 'za', 'KE': 'ke'
+        };
+
+        fetch('https://ipapi.co/json/')
+            .then(r => r.json())
+            .then(data => {
+                const curr = countryToCurrency[data.country_code];
+                if (curr) {
+                    document.querySelectorAll('.price[data-' + curr + ']').forEach(el => {
+                        el.textContent = el.getAttribute('data-' + curr);
+                    });
+                }
+            })
+            .catch(() => {});
 
         // 3D TILT ON CARDS
         document.querySelectorAll('.service-card, .price-card').forEach(card => {
