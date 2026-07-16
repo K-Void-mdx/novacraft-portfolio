@@ -161,6 +161,19 @@
         .price-features li { padding: 10px 0; color: #aaa; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
         .price-features li::before { content: '✓ '; color: #6c5ce7; font-weight: 700; }
 
+        /* PRICING NOTE */
+        .pricing-note {
+            margin-top: 48px; padding: 28px 32px; border-radius: 16px;
+            background: rgba(108, 92, 231, 0.06); border: 1px solid rgba(108, 92, 231, 0.15);
+            display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start;
+        }
+        .note-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+        .pricing-note p { color: #aaa; font-size: 0.9rem; line-height: 1.6; }
+        .pricing-note strong { color: #e0e0e0; }
+        .pricing-note a { color: #6c5ce7; text-decoration: none; font-weight: 600; transition: color 0.3s; }
+        .pricing-note a:hover { color: #a29bfe; }
+        .note-extra { width: 100%; margin-top: 4px; padding-top: 12px; border-top: 1px solid rgba(108,92,231,0.1); font-size: 0.8rem !important; color: #777 !important; }
+
         /* CONTACT */
         .contact-section { text-align: center; padding: 100px 40px; max-width: 600px; margin: 0 auto; }
         .contact-section h2 { font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 16px; letter-spacing: -1px; }
@@ -295,17 +308,22 @@
             </div>
             <div class="price-card fade-in fade-in-delay-2">
                 <h3>Premium</h3>
-                <div class="price" data-ng="120000">₦120,000</div>
+                <div class="price" data-ng="150000">₦150,000</div>
                 <ul class="price-features">
                     <li>Full business website</li>
                     <li>E-commerce / online store</li>
-                    <li>Admin dashboard</li>
+                    <li>Admin dashboard + Login</li>
                     <li>Payment integration</li>
                     <li>Free hosting setup</li>
                     <li>Delivery in 7-10 days</li>
                 </ul>
                 <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27m%20interested%20in%20the%20Premium%20plan" class="btn-secondary" style="display:block;text-align:center;" target="_blank">Get Started</a>
             </div>
+        </div>
+        <div class="pricing-note fade-in">
+            <div class="note-icon">💡</div>
+            <p><strong>Need something custom?</strong> Every business is different. If you need a unique design, a domain name, AI-powered features, or anything beyond these plans — <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20custom%20website%20project" target="_blank">DM me</a> and we'll work out a price that fits your budget.</p>
+            <p class="note-extra">🌐 Domain setup and 🤖 AI-integrated websites are priced separately — message me for a quote.</p>
         </div>
     </section>
 
