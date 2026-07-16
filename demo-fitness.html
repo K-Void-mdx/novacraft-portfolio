@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronHouse Fitness — Lagos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #111; color: #e5e5e5; }
+        .demo-banner {
+            background: #6c5ce7; color: #fff; text-align: center;
+            padding: 12px; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;
+        }
+        .demo-banner a { color: #fff; }
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 60px; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .nav-brand {
+            font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+            color: #ef4444; letter-spacing: 2px;
+        }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a { color: #a3a3a3; text-decoration: none; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
+        .nav-links a:hover { color: #ef4444; }
+        .nav-links .btn-sm {
+            background: #ef4444; color: #fff; padding: 10px 24px; border-radius: 8px;
+            text-transform: uppercase; font-size: 0.8rem;
+        }
+        .hero {
+            min-height: 90vh; display: flex; align-items: center; justify-content: center;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(239,68,68,0.1) 0%, transparent 50%);
+            padding: 100px 20px;
+        }
+        .hero h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3.5rem, 10vw, 8rem);
+            letter-spacing: 4px; line-height: 0.95; margin-bottom: 20px;
+        }
+        .hero h1 span { color: #ef4444; }
+        .hero p { color: #737373; font-size: 1.1rem; max-width: 450px; margin: 0 auto 36px; line-height: 1.7; }
+        .btn-red { background: #ef4444; color: #fff; padding: 16px 40px; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; display: inline-block; }
+        .btn-red:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(239,68,68,0.3); }
+        .section { padding: 80px 60px; max-width: 1000px; margin: 0 auto; }
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif; font-size: 3rem;
+            letter-spacing: 3px; margin-bottom: 50px; text-align: center;
+        }
+        .section-title span { color: #ef4444; }
+        .classes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .class-card {
+            background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.02));
+            border: 1px solid rgba(239,68,68,0.15); border-radius: 16px;
+            padding: 32px; text-align: center; transition: all 0.3s;
+        }
+        .class-card:hover { transform: translateY(-6px); border-color: rgba(239,68,68,0.4); }
+        .class-icon { font-size: 2.5rem; margin-bottom: 16px; }
+        .class-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+        .class-card p { color: #737373; font-size: 0.85rem; line-height: 1.6; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+        .price-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 36px; text-align: center; transition: all 0.3s;
+        }
+        .price-card.popular {
+            border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.05);
+            position: relative;
+        }
+        .price-card.popular::before {
+            content: 'BEST VALUE'; position: absolute; top: -12px; left: 50%;
+            transform: translateX(-50%); background: #ef4444; color: #fff;
+            padding: 4px 16px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+        }
+        .price-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+        .price-amount {
+            font-family: 'Bebas Neue', sans-serif; font-size: 3rem;
+            letter-spacing: 2px; margin: 16px 0;
+        }
+        .price-amount span { font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #737373; font-weight: 400; }
+        .price-features { list-style: none; text-align: left; margin: 24px 0; }
+        .price-features li {
+            padding: 8px 0; color: #a3a3a3; font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .price-features li::before { content: '✓ '; color: #ef4444; font-weight: 700; }
+        footer {
+            text-align: center; padding: 40px; color: #525252; font-size: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        @media (max-width: 768px) {
+            nav { padding: 16px 20px; }
+            .section { padding: 60px 20px; }
+            .nav-links { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-banner">This is a demo site built by <a href="https://novacraft-portfolio.vercel.app" target="_blank">NovaCraft</a> — Want one like this? <a href="https://wa.me/2347046855205" target="_blank">Chat on WhatsApp</a></div>
+    <nav>
+        <div class="nav-brand">IRONHOUSE</div>
+        <div class="nav-links">
+            <a href="#classes">Classes</a>
+            <a href="#pricing">Pricing</a>
+            <a href="https://wa.me/2347046855205" class="btn-sm" target="_blank">Join Now</a>
+        </div>
+    </nav>
+    <section class="hero">
+        <div>
+            <h1>NO <span>PAIN</span><br>NO <span>GAIN</span></h1>
+            <p>Lagos' premier fitness studio. Transform your body, elevate your mind. First session free.</p>
+            <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27d%20like%20to%20sign%20up%20for%20a%20class" class="btn-red" target="_blank">Start Free Trial</a>
+        </div>
+    </section>
+    <section class="section" id="classes">
+        <h2 class="section-title">Our <span>Classes</span></h2>
+        <div class="classes-grid">
+            <div class="class-card">
+                <div class="class-icon">🏋️</div>
+                <h3>Strength</h3>
+                <p>Build muscle and increase your power with guided weight training sessions.</p>
+            </div>
+            <div class="class-card">
+                <div class="class-icon">🥊</div>
+                <h3>Boxing</h3>
+                <p>High-energy boxing workouts that burn calories and build confidence.</p>
+            </div>
+            <div class="class-card">
+                <div class="class-icon">🧘</div>
+                <h3>Yoga</h3>
+                <p>Find your balance and flexibility with our expert-led yoga sessions.</p>
+            </div>
+            <div class="class-card">
+                <div class class="class-icon">🏃</div>
+                <h3>HIIT</h3>
+                <p>Maximum burn in minimum time. Fast-paced interval training.</p>
+            </div>
+        </div>
+    </section>
+    <section class="section" id="pricing">
+        <h2 class="section-title">Membership <span>Plans</span></h2>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>Basic</h3>
+                <div class="price-amount">₦15k<span>/month</span></div>
+                <ul class="price-features">
+                    <li>Gym access (6am - 6pm)</li>
+                    <li>Locker room access</li>
+                    <li>1 class per week</li>
+                </ul>
+                <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27m%20interested%20in%20the%20Basic%20plan" class="btn-red" style="display:block;text-align:center;font-size:0.85rem;padding:12px 24px;" target="_blank">Get Started</a>
+            </div>
+            <div class="price-card popular">
+                <h3>Pro</h3>
+                <div class="price-amount">₦30k<span>/month</span></div>
+                <ul class="price-features">
+                    <li>24/7 gym access</li>
+                    <li>Unlimited classes</li>
+                    <li>Personal trainer (2x/week)</li>
+                    <li>Nutrition plan</li>
+                </ul>
+                <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27m%20interested%20in%20the%20Pro%20plan" class="btn-red" style="display:block;text-align:center;font-size:0.85rem;padding:12px 24px;" target="_blank">Get Started</a>
+            </div>
+            <div class="price-card">
+                <h3>Elite</h3>
+                <div class="price-amount">₦50k<span>/month</span></div>
+                <ul class="price-features">
+                    <li>Everything in Pro</li>
+                    <li>Daily personal training</li>
+                    <li>Custom meal plans</li>
+                    <li>Recovery sessions</li>
+                </ul>
+                <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27m%20interested%20in%20the%20Elite%20plan" class="btn-red" style="display:block;text-align:center;font-size:0.85rem;padding:12px 24px;" target="_blank">Get Started</a>
+            </div>
+        </div>
+    </section>
+    <footer>
+        &copy; 2026 IronHouse Fitness. All rights reserved.
+    </footer>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Flame Grill — Lagos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0c0a09; color: #e7e5e4; }
+        .demo-banner {
+            background: #6c5ce7;
+            color: #fff;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .demo-banner a { color: #fff; }
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 60px; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .nav-brand { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #f97316; }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a { color: #a8a29e; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #f97316; }
+        .hero {
+            min-height: 85vh;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            background: linear-gradient(180deg, rgba(249,115,22,0.08) 0%, transparent 60%);
+            padding: 100px 20px 60px;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            line-height: 1.1; margin-bottom: 20px;
+        }
+        .hero h1 span { color: #f97316; }
+        .hero p { color: #a8a29e; font-size: 1.1rem; max-width: 500px; margin: 0 auto 36px; line-height: 1.7; }
+        .btn {
+            display: inline-block; padding: 16px 36px; border-radius: 12px;
+            font-weight: 600; text-decoration: none; transition: all 0.3s; font-size: 1rem;
+        }
+        .btn-orange { background: #f97316; color: #fff; }
+        .btn-orange:hover { background: #ea580c; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(249,115,22,0.3); }
+        .btn-outline { border: 1px solid rgba(255,255,255,0.15); color: #fff; margin-left: 12px; }
+        .section { padding: 80px 60px; max-width: 1000px; margin: 0 auto; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 40px; text-align: center; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .menu-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 28px; transition: all 0.3s;
+        }
+        .menu-card:hover { border-color: rgba(249,115,22,0.3); transform: translateY(-4px); }
+        .menu-emoji { font-size: 2.5rem; margin-bottom: 12px; }
+        .menu-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+        .menu-card p { color: #a8a29e; font-size: 0.85rem; line-height: 1.6; margin-bottom: 12px; }
+        .menu-price { color: #f97316; font-weight: 700; font-size: 1.2rem; }
+        .hours {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;
+            text-align: center;
+        }
+        .hours-card { padding: 28px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); }
+        .hours-card h3 { color: #f97316; font-size: 1rem; margin-bottom: 8px; }
+        .hours-card p { color: #a8a29e; font-size: 0.9rem; }
+        footer {
+            text-align: center; padding: 40px; color: #57534e; font-size: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        @media (max-width: 768px) {
+            nav { padding: 16px 20px; }
+            .nav-links { gap: 16px; }
+            .section { padding: 60px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-banner">This is a demo site built by <a href="https://novacraft-portfolio.vercel.app" target="_blank">NovaCraft</a> — Want one like this? <a href="https://wa.me/2347046855205" target="_blank">Chat on WhatsApp</a></div>
+    <nav>
+        <div class="nav-brand">The Flame Grill</div>
+        <div class="nav-links">
+            <a href="#menu">Menu</a>
+            <a href="#hours">Hours</a>
+            <a href="https://wa.me/2347046855205" target="_blank">Reserve</a>
+        </div>
+    </nav>
+    <section class="hero">
+        <div>
+            <h1>Grilled to <span>Perfection</span></h1>
+            <p>The best suya, pepper soup, and grilled delicacies in Lagos. Open every evening from 5pm.</p>
+            <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27d%20like%20to%20reserve%20a%20table" class="btn btn-orange" target="_blank">Reserve a Table</a>
+            <a href="#menu" class="btn btn-outline">View Menu</a>
+        </div>
+    </section>
+    <section class="section" id="menu">
+        <h2 class="section-title">Our Menu</h2>
+        <div class="menu-grid">
+            <div class="menu-card">
+                <div class="menu-emoji">🔥</div>
+                <h3>Classic Suya Plate</h3>
+                <p>Spicy grilled beef suya served with onions, tomatoes, and our signature yaji spice.</p>
+                <div class="menu-price">₦3,500</div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-emoji">🍲</div>
+                <h3>Pepper Soup</h3>
+                <p>Hot and spicy catfish pepper soup with fresh herbs and traditional spices.</p>
+                <div class="menu-price">₦4,000</div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-emoji">🍗</div>
+                <h3>Grilled Chicken</h3>
+                <p>Whole chicken marinated in our special sauce and grilled over open flame.</p>
+                <div class="menu-price">₦5,500</div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-emoji">🍢</div>
+                <h3>Mixed Grill Platter</h3>
+                <p>Assorted grilled meats for 2-3 people. Perfect for sharing.</p>
+                <div class="menu-price">₦12,000</div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-emoji">🍺</div>
+                <h3>Cold Drinks</h3>
+                <p>Chilled beers, soft drinks, and fresh zobo to wash it all down.</p>
+                <div class="menu-price">₦500+</div>
+            </div>
+            <div class="menu-card">
+                <div class="menu-emoji">🥗</div>
+                <h3>Side Salads</h3>
+                <p>Fresh garden salad or coleslaw to complement your meal.</p>
+                <div class="menu-price">₦1,500</div>
+            </div>
+        </div>
+    </section>
+    <section class="section" id="hours">
+        <h2 class="section-title">Opening Hours</h2>
+        <div class="hours">
+            <div class="hours-card">
+                <h3>Monday - Thursday</h3>
+                <p>5:00 PM — 11:00 PM</p>
+            </div>
+            <div class="hours-card">
+                <h3>Friday - Saturday</h3>
+                <p>5:00 PM — 1:00 AM</p>
+            </div>
+            <div class="hours-card">
+                <h3>Sunday</h3>
+                <p>3:00 PM — 10:00 PM</p>
+            </div>
+        </div>
+    </section>
+    <footer>
+        &copy; 2026 The Flame Grill. All rights reserved.
+    </footer>
+</body>
+</html>

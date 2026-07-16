@@ -8,467 +8,248 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            overflow-x: hidden;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0a0a; color: #e0e0e0; overflow-x: hidden; }
+        html { scroll-behavior: smooth; }
 
         /* NAV */
         nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: fixed; top: 0; width: 100%; padding: 16px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05);
         }
+        .logo { font-size: 1.4rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .logo span { color: #6c5ce7; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-right a { text-decoration: none; transition: all 0.3s; }
+        .social-icon { width: 22px; height: 22px; fill: #777; transition: all 0.3s; }
+        .nav-right a:hover .social-icon { fill: #fff; }
 
-        .logo {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: -0.5px;
-        }
-
-        .logo span {
-            color: #6c5ce7;
-        }
-
-        nav a {
-            color: #999;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: #fff;
-        }
+        /* ANIMATIONS */
+        .fade-in { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .fade-in-delay-1 { transition-delay: 0.1s; }
+        .fade-in-delay-2 { transition-delay: 0.2s; }
+        .fade-in-delay-3 { transition-delay: 0.3s; }
 
         /* HERO */
         .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 120px 20px 80px;
-            position: relative;
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 120px 20px 80px; position: relative;
         }
-
         .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(108, 92, 231, 0.15) 0%, transparent 70%);
-            pointer-events: none;
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.12) 0%, transparent 70%);
+            pointer-events: none; animation: pulse 6s ease-in-out infinite;
         }
-
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+        }
         .badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border: 1px solid rgba(108, 92, 231, 0.4);
-            border-radius: 50px;
-            font-size: 0.8rem;
-            color: #6c5ce7;
-            margin-bottom: 30px;
-            font-weight: 500;
+            display: inline-block; padding: 6px 16px;
+            border: 1px solid rgba(108, 92, 231, 0.4); border-radius: 50px;
+            font-size: 0.8rem; color: #6c5ce7; margin-bottom: 30px; font-weight: 500;
         }
-
         .hero h1 {
-            font-size: clamp(2.5rem, 7vw, 4.5rem);
-            font-weight: 800;
-            color: #fff;
-            line-height: 1.1;
-            max-width: 800px;
-            margin-bottom: 24px;
-            letter-spacing: -2px;
+            font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 800; color: #fff;
+            line-height: 1.1; max-width: 800px; margin-bottom: 24px; letter-spacing: -2px;
         }
-
         .hero h1 em {
             font-style: normal;
             background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
         .hero p {
-            font-size: 1.15rem;
-            color: #888;
-            max-width: 500px;
-            line-height: 1.7;
-            margin-bottom: 40px;
+            font-size: 1.15rem; color: #888; max-width: 500px;
+            line-height: 1.7; margin-bottom: 40px;
         }
-
-        .cta-group {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
+        .cta-group { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
         .btn-primary {
-            padding: 14px 32px;
-            background: #6c5ce7;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s;
+            padding: 14px 32px; background: #6c5ce7; color: #fff; border: none;
+            border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
+            text-decoration: none; transition: all 0.3s;
         }
-
-        .btn-primary:hover {
-            background: #5a4bd1;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
-        }
-
+        .btn-primary:hover { background: #5a4bd1; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3); }
         .btn-secondary {
-            padding: 14px 32px;
-            background: transparent;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s;
+            padding: 14px 32px; background: transparent; color: #fff;
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+            font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.3s;
         }
+        .btn-secondary:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); }
 
-        .btn-secondary:hover {
-            border-color: rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.05);
+        /* ICON BUTTONS */
+        .icon-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 56px; height: 56px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03); text-decoration: none; transition: all 0.3s;
         }
+        .icon-btn:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+        .icon-btn svg { width: 24px; height: 24px; fill: #e0e0e0; }
+
+        /* SECTIONS */
+        .section { padding: 100px 40px; max-width: 1100px; margin: 0 auto; }
+        .section-label {
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px;
+            color: #6c5ce7; margin-bottom: 16px; font-weight: 600;
+        }
+        .section h2 { font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 60px; letter-spacing: -1px; }
 
         /* SERVICES */
-        .section {
-            padding: 100px 40px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .section-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #6c5ce7;
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
-
-        .section h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 60px;
-            letter-spacing: -1px;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-        }
-
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
         .service-card {
-            padding: 36px;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            background: rgba(255,255,255,0.02);
-            transition: all 0.3s;
+            padding: 36px; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px;
+            background: rgba(255,255,255,0.02); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-style: preserve-3d; perspective: 800px;
         }
-
-        .service-card:hover {
-            border-color: rgba(108, 92, 231, 0.3);
-            background: rgba(108, 92, 231, 0.05);
-            transform: translateY(-4px);
-        }
-
+        .service-card:hover { border-color: rgba(108, 92, 231, 0.3); background: rgba(108, 92, 231, 0.05); }
         .service-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background: rgba(108, 92, 231, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            margin-bottom: 20px;
+            width: 48px; height: 48px; border-radius: 12px;
+            background: rgba(108, 92, 231, 0.15); display: flex; align-items: center;
+            justify-content: center; font-size: 1.3rem; margin-bottom: 20px;
         }
-
-        .service-card h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 12px;
-        }
-
-        .service-card p {
-            color: #888;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
+        .service-card h3 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 12px; }
+        .service-card p { color: #888; font-size: 0.95rem; line-height: 1.6; }
 
         /* WORK */
-        .work-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-        }
-
+        .work-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
         .work-card {
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.02);
-            transition: all 0.3s;
+            border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-style: preserve-3d; perspective: 1000px; cursor: pointer; text-decoration: none; color: inherit; display: block;
         }
-
-        .work-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(108, 92, 231, 0.3);
-        }
-
+        .work-card:hover { transform: translateY(-8px) rotateX(2deg); border-color: rgba(108, 92, 231, 0.4); box-shadow: 0 20px 50px rgba(108, 92, 231, 0.15); }
         .work-preview {
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            position: relative;
-            overflow: hidden;
+            height: 220px; display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem; position: relative; overflow: hidden; transition: all 0.5s;
         }
-
-        .work-preview.bg1 {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        .work-card:hover .work-preview { transform: scale(1.05); }
+        .work-preview::after {
+            content: 'VIEW SITE →'; position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 20px; text-align: center; font-size: 0.8rem; font-weight: 700;
+            letter-spacing: 2px; color: #fff;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            opacity: 0; transform: translateY(10px); transition: all 0.3s;
         }
-
-        .work-preview.bg2 {
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-        }
-
-        .work-preview.bg3 {
-            background: linear-gradient(135deg, #0d1117, #161b22, #21262d);
-        }
-
-        .work-info {
-            padding: 24px;
-        }
-
-        .work-info h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .work-info p {
-            color: #888;
-            font-size: 0.85rem;
-        }
-
+        .work-card:hover .work-preview::after { opacity: 1; transform: translateY(0); }
+        .work-preview.bg1 { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
+        .work-preview.bg2 { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
+        .work-preview.bg3 { background: linear-gradient(135deg, #2d1b4e, #1a1a2e, #111); }
+        .work-info { padding: 24px; }
+        .work-info h3 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .work-info p { color: #888; font-size: 0.85rem; }
         .tag {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-right: 6px;
-            margin-top: 12px;
-            background: rgba(108, 92, 231, 0.15);
-            color: #a29bfe;
+            display: inline-block; padding: 4px 10px; border-radius: 6px;
+            font-size: 0.7rem; font-weight: 600; margin-right: 6px; margin-top: 12px;
+            background: rgba(108, 92, 231, 0.15); color: #a29bfe;
+        }
+
+        /* FLOATING PARTICLES */
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .particle {
+            position: absolute; width: 4px; height: 4px; border-radius: 50%;
+            background: rgba(108, 92, 231, 0.3); animation: float linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
         }
 
         /* PRICING */
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
         .price-card {
-            padding: 40px;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            background: rgba(255,255,255,0.02);
-            text-align: center;
-            transition: all 0.3s;
-            position: relative;
+            padding: 40px; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px;
+            background: rgba(255,255,255,0.02); text-align: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; transform-style: preserve-3d;
         }
-
-        .price-card.featured {
-            border-color: rgba(108, 92, 231, 0.4);
-            background: rgba(108, 92, 231, 0.05);
-        }
-
+        .price-card:hover { transform: translateY(-6px); }
+        .price-card.featured { border-color: rgba(108, 92, 231, 0.4); background: rgba(108, 92, 231, 0.05); }
         .price-card.featured::before {
-            content: 'MOST POPULAR';
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #6c5ce7;
-            color: #fff;
-            padding: 4px 16px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+            content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%;
+            transform: translateX(-50%); background: #6c5ce7; color: #fff;
+            padding: 4px 16px; border-radius: 20px; font-size: 0.7rem;
+            font-weight: 700; letter-spacing: 1px;
         }
-
-        .price-card h3 {
-            font-size: 1.2rem;
-            color: #fff;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #fff;
-            margin: 20px 0;
-            letter-spacing: -1px;
-        }
-
-        .price span {
-            font-size: 0.9rem;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .price-features {
-            list-style: none;
-            text-align: left;
-            margin: 24px 0;
-        }
-
-        .price-features li {
-            padding: 10px 0;
-            color: #aaa;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-
-        .price-features li::before {
-            content: '✓ ';
-            color: #6c5ce7;
-            font-weight: 700;
-        }
+        .price-card h3 { font-size: 1.2rem; color: #fff; font-weight: 700; margin-bottom: 8px; }
+        .price { font-size: 2.5rem; font-weight: 800; color: #fff; margin: 20px 0; letter-spacing: -1px; }
+        .price span { font-size: 0.9rem; color: #666; font-weight: 500; }
+        .price-features { list-style: none; text-align: left; margin: 24px 0; }
+        .price-features li { padding: 10px 0; color: #aaa; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .price-features li::before { content: '✓ '; color: #6c5ce7; font-weight: 700; }
 
         /* CONTACT */
-        .contact-section {
-            text-align: center;
-            padding: 100px 40px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .contact-section h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-        }
-
-        .contact-section p {
-            color: #888;
-            margin-bottom: 40px;
-            font-size: 1.05rem;
-            line-height: 1.6;
-        }
+        .contact-section { text-align: center; padding: 100px 40px; max-width: 600px; margin: 0 auto; }
+        .contact-section h2 { font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 16px; letter-spacing: -1px; }
+        .contact-section p { color: #888; margin-bottom: 40px; font-size: 1.05rem; line-height: 1.6; }
 
         /* FOOTER */
         footer {
-            text-align: center;
-            padding: 40px;
-            color: #444;
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(255,255,255,0.04);
+            text-align: center; padding: 40px; color: #444; font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.04); position: relative; z-index: 1;
         }
 
         /* MOBILE */
         @media (max-width: 768px) {
-            nav {
-                padding: 16px 20px;
-            }
-
-            .section {
-                padding: 60px 20px;
-            }
-
-            .hero {
-                padding: 100px 20px 60px;
-            }
-
-            .hero h1 {
-                letter-spacing: -1px;
-            }
-
-            .services-grid,
-            .work-grid,
-            .pricing-grid {
-                grid-template-columns: 1fr;
-            }
+            nav { padding: 14px 20px; }
+            .section { padding: 60px 20px; }
+            .hero { padding: 100px 20px 60px; }
+            .hero h1 { letter-spacing: -1px; }
+            .services-grid, .work-grid, .pricing-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+    <!-- FLOATING PARTICLES -->
+    <div class="particles" id="particles"></div>
+
     <nav>
         <div class="logo">Nova<span>Craft</span></div>
-        <a href="#contact">Let's Talk</a>
+        <div class="nav-right">
+            <a href="https://wa.me/2347046855205" target="_blank" title="WhatsApp">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </a>
+            <a href="https://instagram.com/novacraft.studio3" target="_blank" title="Instagram">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+        </div>
     </nav>
 
     <section class="hero">
         <div class="badge">Available for Projects</div>
-        <h1>Websites that make your business <em>stand out</em></h1>
-        <p>I design and build clean, modern websites that help businesses attract more customers and look professional online.</p>
-        <div class="cta-group">
-            <a href="https://wa.me/2347046855205" class="btn-primary" target="_blank">Message on WhatsApp</a>
+        <h1 class="fade-in">Websites that make your business <em>stand out</em></h1>
+        <p class="fade-in fade-in-delay-1">I design and build clean, modern websites that help businesses attract more customers and look professional online.</p>
+        <div class="cta-group fade-in fade-in-delay-2">
+            <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20website%20project" class="icon-btn" target="_blank" title="Chat on WhatsApp">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </a>
+            <a href="https://instagram.com/novacraft.studio3" class="icon-btn" target="_blank" title="Instagram">
+                <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
             <a href="#work" class="btn-secondary">See My Work</a>
         </div>
     </section>
 
     <section class="section" id="services">
-        <div class="section-label">What I Do</div>
-        <h2>Services</h2>
+        <div class="section-label fade-in">What I Do</div>
+        <h2 class="fade-in">Services</h2>
         <div class="services-grid">
-            <div class="service-card">
+            <div class="service-card fade-in">
                 <div class="service-icon">🌐</div>
                 <h3>Business Websites</h3>
                 <p>Professional websites for restaurants, shops, clinics, gyms, and any business that wants to look legit online.</p>
             </div>
-            <div class="service-card">
+            <div class="service-card fade-in fade-in-delay-1">
                 <div class="service-icon">📱</div>
                 <h3>Landing Pages</h3>
                 <p>Single-page sites built to convert visitors into customers. Perfect for product launches or events.</p>
             </div>
-            <div class="service-card">
+            <div class="service-card fade-in fade-in-delay-2">
                 <div class="service-icon">⚡</div>
                 <h3>E-Commerce</h3>
                 <p>Online stores where customers can browse and buy your products directly from your website.</p>
@@ -477,10 +258,10 @@
     </section>
 
     <section class="section" id="work">
-        <div class="section-label">Portfolio</div>
-        <h2>Recent Work</h2>
+        <div class="section-label fade-in">Portfolio</div>
+        <h2 class="fade-in">Recent Work</h2>
         <div class="work-grid">
-            <div class="work-card">
+            <a href="demo-restaurant.html" class="work-card fade-in" target="_blank">
                 <div class="work-preview bg1">🍽️</div>
                 <div class="work-info">
                     <h3>Restaurant Website</h3>
@@ -488,8 +269,8 @@
                     <span class="tag">HTML/CSS</span>
                     <span class="tag">Responsive</span>
                 </div>
-            </div>
-            <div class="work-card">
+            </a>
+            <a href="demo-fitness.html" class="work-card fade-in fade-in-delay-1" target="_blank">
                 <div class="work-preview bg2">💪</div>
                 <div class="work-info">
                     <h3>Fitness Studio</h3>
@@ -497,8 +278,8 @@
                     <span class="tag">JavaScript</span>
                     <span class="tag">Mobile-First</span>
                 </div>
-            </div>
-            <div class="work-card">
+            </a>
+            <a href="demo-ecommerce.html" class="work-card fade-in fade-in-delay-2" target="_blank">
                 <div class="work-preview bg3">🛍️</div>
                 <div class="work-info">
                     <h3>Online Store</h3>
@@ -506,17 +287,17 @@
                     <span class="tag">E-Commerce</span>
                     <span class="tag">Payments</span>
                 </div>
-            </div>
+            </a>
         </div>
     </section>
 
     <section class="section" id="pricing">
-        <div class="section-label">Pricing</div>
-        <h2>Simple, Honest Pricing</h2>
+        <div class="section-label fade-in">Pricing</div>
+        <h2 class="fade-in">Simple, Honest Pricing</h2>
         <div class="pricing-grid">
-            <div class="price-card">
+            <div class="price-card fade-in">
                 <h3>Basic</h3>
-                <div class="price">₦30,000</div>
+                <div class="price">₦35,000</div>
                 <ul class="price-features">
                     <li>Single page website</li>
                     <li>Mobile responsive</li>
@@ -526,9 +307,9 @@
                 </ul>
                 <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27m%20interested%20in%20the%20Basic%20plan" class="btn-secondary" style="display:block;text-align:center;" target="_blank">Get Started</a>
             </div>
-            <div class="price-card featured">
+            <div class="price-card featured fade-in fade-in-delay-1">
                 <h3>Standard</h3>
-                <div class="price">₦60,000</div>
+                <div class="price">₦70,000</div>
                 <ul class="price-features">
                     <li>Multi-page website (up to 5)</li>
                     <li>Mobile responsive</li>
@@ -539,9 +320,9 @@
                 </ul>
                 <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27m%20interested%20in%20the%20Standard%20plan" class="btn-primary" style="display:block;text-align:center;" target="_blank">Get Started</a>
             </div>
-            <div class="price-card">
+            <div class="price-card fade-in fade-in-delay-2">
                 <h3>Premium</h3>
-                <div class="price">₦100,000</div>
+                <div class="price">₦120,000</div>
                 <ul class="price-features">
                     <li>Full business website</li>
                     <li>E-commerce / online store</li>
@@ -556,15 +337,64 @@
     </section>
 
     <section class="contact-section" id="contact">
-        <div class="section-label">Get In Touch</div>
-        <h2>Let's build something great</h2>
-        <p>Have a project in mind? Need a website for your business? Just send me a message and let's talk.</p>
-        <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20website%20project" class="btn-primary" target="_blank">Message on WhatsApp</a>
+        <div class="section-label fade-in">Get In Touch</div>
+        <h2 class="fade-in">Let's build something great</h2>
+        <p class="fade-in">Have a project in mind? Need a website for your business? Just send me a message and let's talk.</p>
+        <div class="fade-in" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+            <a href="https://wa.me/2347046855205?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20website%20project" class="icon-btn" target="_blank" title="WhatsApp">
+                <svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:#e0e0e0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </a>
+            <a href="https://instagram.com/novacraft.studio3" class="icon-btn" target="_blank" title="Instagram">
+                <svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:#e0e0e0;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+        </div>
     </section>
 
     <footer>
         &copy; 2026 NovaCraft. Built with code and caffeine.
     </footer>
+
+    <script>
+        // SCROLL ANIMATIONS
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // 3D TILT ON CARDS
+        document.querySelectorAll('.service-card, .price-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+
+        // FLOATING PARTICLES
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            particle.style.animationDelay = (Math.random() * 10) + 's';
+            particle.style.width = particle.style.height = (Math.random() * 4 + 2) + 'px';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
 
 </body>
 </html>
