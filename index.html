@@ -7,6 +7,9 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -630,11 +633,8 @@
         });
     </script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-        import { getDatabase, ref as dbRef, push, set, onValue, remove, get, query, orderByChild } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
-
+    <script>
+        // ===== FIREBASE =====
         const firebaseConfig = {
             apiKey: "AIzaSyA6R3qnH4nojZLyWP12rtJq7Khu0_r9vRA",
             authDomain: "nova-crafts.firebaseapp.com",
@@ -644,11 +644,10 @@
             messagingSenderId: "899424314171",
             appId: "1:899424314171:web:e88b6f121fa9c91cf9cd1e"
         };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        const provider = new GoogleAuthProvider();
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+        const provider = new firebase.auth.GoogleAuthProvider();
 
         let currentUser = null;
 
@@ -670,19 +669,18 @@
         }
 
         // ===== AUTH =====
-        window.signInWithGoogle = function() {
-            signInWithPopup(auth, provider).catch(err => console.error('Auth error:', err));
-        };
-        window.signOutUser = function() {
-            signOut(auth);
+        function signInWithGoogle() {
+            auth.signInWithPopup(provider).catch(err => console.error('Auth error:', err));
+        }
+        function signOutUser() {
+            auth.signOut();
             document.getElementById('userMenu').classList.remove('open');
-        };
-        window.toggleUserMenu = function() {
+        }
+        function toggleUserMenu() {
             document.getElementById('userMenu').classList.toggle('open');
             document.getElementById('notifDropdown').classList.remove('open');
-        };
-
-        onAuthStateChanged(auth, user => {
+        }
+        auth.onAuthStateChanged(user => {
             currentUser = user;
             const avatar = document.getElementById('userAvatar');
             const hint = document.getElementById('commentHint');
@@ -721,7 +719,7 @@
             document.getElementById('commentSubmitBtn').disabled = len === 0 || len > MAX_CHARS || !currentUser;
         });
 
-        window.handleComment = function() {
+        function handleComment() {
             if (!currentUser || !commentInput.value.trim()) return;
             const text = commentInput.value.trim();
             if (text.length > MAX_CHARS) return;
@@ -732,18 +730,17 @@
                 text: text,
                 timestamp: Date.now()
             };
-            const newRef = push(dbRef(db, 'comments'));
-            set(newRef, commentData);
+            const ref = db.ref('comments').push();
+            ref.set(commentData);
             commentInput.value = '';
             charCount.textContent = '0/500';
-            sendNotificationToAll('new_comment', currentUser.displayName, newRef.key);
-        };
+            sendNotificationToAll('new_comment', currentUser.displayName, ref.key);
+        }
 
         function loadComments() {
             const list = document.getElementById('commentsList');
             const loading = document.getElementById('commentsLoading');
-            const commentsRef = dbRef(db, 'comments');
-            onValue(commentsRef, snap => {
+            db.ref('comments').orderByChild('timestamp').on('value', snap => {
                 loading.style.display = 'none';
                 list.innerHTML = '';
                 const comments = [];
@@ -816,8 +813,8 @@
             `;
         }
 
-        window.toggleReplyInput = function(cid, btn) {
-            if (!currentUser) { window.signInWithGoogle(); return; }
+        function toggleReplyInput(cid, btn) {
+            if (!currentUser) { signInWithGoogle(); return; }
             const section = document.getElementById('replies-' + cid);
             const existing = section.querySelector('.reply-input-wrap');
             if (existing) { existing.remove(); return; }
@@ -826,9 +823,9 @@
             wrap.innerHTML = `<textarea placeholder="Write a reply..." rows="1"></textarea><button class="btn-primary" onclick="submitReply('${cid}', this)">Reply</button>`;
             section.appendChild(wrap);
             wrap.querySelector('textarea').focus();
-        };
+        }
 
-        window.submitReply = function(cid, btn) {
+        function submitReply(cid, btn) {
             const wrap = btn.parentElement;
             const text = wrap.querySelector('textarea').value.trim();
             if (!text || !currentUser) return;
@@ -839,13 +836,13 @@
                 text: text,
                 timestamp: Date.now()
             };
-            const newRef = push(dbRef(db, `comments/${cid}/replies`));
-            set(newRef, replyData);
+            const ref = db.ref(`comments/${cid}/replies`).push();
+            ref.set(replyData);
             wrap.remove();
-            get(dbRef(db, `comments/${cid}`)).then(snap => {
+            db.ref(`comments/${cid}`).once('value', snap => {
                 const c = snap.val();
                 if (c && c.uid !== currentUser.uid) {
-                    push(dbRef(db, `notifications/${c.uid}`), {
+                    db.ref(`notifications/${c.uid}`).push({
                         type: 'reply',
                         from: currentUser.displayName,
                         commentId: cid,
@@ -855,23 +852,23 @@
                     });
                 }
             });
-        };
+        }
 
         // ===== LIKES / DISLIKES =====
-        window.toggleLike = function(cid, btn) {
-            if (!currentUser) { window.signInWithGoogle(); return; }
-            const likeRef = dbRef(db, `comments/${cid}/likes/${currentUser.uid}`);
-            const dislikeRef = dbRef(db, `comments/${cid}/dislikes/${currentUser.uid}`);
-            get(likeRef).then(snap => {
+        function toggleLike(cid, btn) {
+            if (!currentUser) { signInWithGoogle(); return; }
+            const likeRef = db.ref(`comments/${cid}/likes/${currentUser.uid}`);
+            const dislikeRef = db.ref(`comments/${cid}/dislikes/${currentUser.uid}`);
+            likeRef.once('value', snap => {
                 if (snap.exists()) {
-                    remove(likeRef);
+                    likeRef.remove();
                 } else {
-                    remove(dislikeRef);
-                    set(likeRef, true);
-                    get(dbRef(db, `comments/${cid}`)).then(s => {
+                    dislikeRef.remove();
+                    likeRef.set(true);
+                    db.ref(`comments/${cid}`).once('value', s => {
                         const c = s.val();
                         if (c && c.uid !== currentUser.uid) {
-                            push(dbRef(db, `notifications/${c.uid}`), {
+                            db.ref(`notifications/${c.uid}`).push({
                                 type: 'like', from: currentUser.displayName,
                                 commentId: cid, text: 'liked your comment',
                                 read: false, timestamp: Date.now()
@@ -880,42 +877,41 @@
                     });
                 }
             });
-        };
-        window.toggleDislike = function(cid, btn) {
-            if (!currentUser) { window.signInWithGoogle(); return; }
-            const likeRef = dbRef(db, `comments/${cid}/likes/${currentUser.uid}`);
-            const dislikeRef = dbRef(db, `comments/${cid}/dislikes/${currentUser.uid}`);
-            get(dislikeRef).then(snap => {
-                if (snap.exists()) { remove(dislikeRef); }
-                else { remove(likeRef); set(dislikeRef, true); }
+        }
+        function toggleDislike(cid, btn) {
+            if (!currentUser) { signInWithGoogle(); return; }
+            const likeRef = db.ref(`comments/${cid}/likes/${currentUser.uid}`);
+            const dislikeRef = db.ref(`comments/${cid}/dislikes/${currentUser.uid}`);
+            dislikeRef.once('value', snap => {
+                if (snap.exists()) { dislikeRef.remove(); }
+                else { likeRef.remove(); dislikeRef.set(true); }
             });
-        };
-        window.toggleReplyLike = function(cid, rid, btn) {
-            if (!currentUser) { window.signInWithGoogle(); return; }
-            const ref_ = dbRef(db, `comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
-            const dref = dbRef(db, `comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
-            get(ref_).then(snap => {
-                if (snap.exists()) remove(ref_);
-                else { remove(dref); set(ref_, true); }
+        }
+        function toggleReplyLike(cid, rid, btn) {
+            if (!currentUser) { signInWithGoogle(); return; }
+            const ref = db.ref(`comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
+            const dref = db.ref(`comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
+            ref.once('value', snap => {
+                if (snap.exists()) ref.remove();
+                else { dref.remove(); ref.set(true); }
             });
-        };
-        window.toggleReplyDislike = function(cid, rid, btn) {
-            if (!currentUser) { window.signInWithGoogle(); return; }
-            const ref_ = dbRef(db, `comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
-            const dref = dbRef(db, `comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
-            get(dref).then(snap => {
-                if (snap.exists()) remove(dref);
-                else { remove(ref_); set(dref, true); }
+        }
+        function toggleReplyDislike(cid, rid, btn) {
+            if (!currentUser) { signInWithGoogle(); return; }
+            const ref = db.ref(`comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
+            const dref = db.ref(`comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
+            dref.once('value', snap => {
+                if (snap.exists()) dref.remove();
+                else { ref.remove(); dref.set(true); }
             });
-        };
+        }
 
         // ===== NOTIFICATIONS =====
         function listenNotifications(uid) {
             const bell = document.getElementById('notifBell');
             const badge = document.getElementById('notifBadge');
             const dropdown = document.getElementById('notifDropdown');
-            const notifRef = dbRef(db, `notifications/${uid}`);
-            onValue(notifRef, snap => {
+            db.ref(`notifications/${uid}`).orderByChild('timestamp').on('value', snap => {
                 const notifs = [];
                 let unread = 0;
                 snap.forEach(child => {
@@ -942,24 +938,24 @@
             });
         }
 
-        window.markRead = function(nid, uid) {
-            set(dbRef(db, `notifications/${uid}/${nid}/read`), true);
-        };
+        function markRead(nid, uid) {
+            db.ref(`notifications/${uid}/${nid}/read`).set(true);
+        }
 
-        window.toggleNotifications = function() {
+        function toggleNotifications() {
             document.getElementById('notifDropdown').classList.toggle('open');
             document.getElementById('userMenu').classList.remove('open');
-        };
+        }
 
         function sendNotificationToAll(type, fromName, commentId) {
-            get(dbRef(db, 'comments')).then(snap => {
+            db.ref('comments').once('value', snap => {
                 const uids = new Set();
                 snap.forEach(child => {
                     const c = child.val();
                     if (c.uid && c.uid !== (currentUser && currentUser.uid)) uids.add(c.uid);
                 });
                 uids.forEach(uid => {
-                    push(dbRef(db, `notifications/${uid}`), {
+                    db.ref(`notifications/${uid}`).push({
                         type: type, from: fromName, commentId: commentId,
                         text: type === 'new_comment' ? 'posted a new comment' : '',
                         read: false, timestamp: Date.now()
