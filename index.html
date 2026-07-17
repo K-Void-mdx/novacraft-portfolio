@@ -7,9 +7,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0a0a; color: #e0e0e0; overflow-x: hidden; }
@@ -632,30 +630,28 @@
         });
     </script>
 
-    <script>
-        // ===== FIREBASE =====
-        try {
-            const firebaseConfig = {
-                apiKey: "AIzaSyA6R3qnH4nojZLyWP12rtJq7Khu0_r9vRA",
-                authDomain: "nova-crafts.firebaseapp.com",
-                databaseURL: "https://nova-crafts-default-rtdb.firebaseio.com",
-                projectId: "nova-crafts",
-                storageBucket: "nova-crafts.firebasestorage.app",
-                messagingSenderId: "899424314171",
-                appId: "1:899424314171:web:e88b6f121fa9c91cf9cd1e"
-            };
-            firebase.initializeApp(firebaseConfig);
-        } catch(e) {
-            console.error('Firebase init failed:', e);
-        }
-        const auth = firebase.auth();
-        const db = firebase.database();
-        const provider = new firebase.auth.GoogleAuthProvider();
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getDatabase, ref as dbRef, push, set, onValue, once, remove, orderByChild, get } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6R3qnH4nojZLyWP12rtJq7Khu0_r9vRA",
+            authDomain: "nova-crafts.firebaseapp.com",
+            databaseURL: "https://nova-crafts-default-rtdb.firebaseio.com",
+            projectId: "nova-crafts",
+            storageBucket: "nova-crafts.firebasestorage.app",
+            messagingSenderId: "899424314171",
+            appId: "1:899424314171:web:e88b6f121fa9c91cf9cd1e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const provider = new GoogleAuthProvider();
 
         let currentUser = null;
-        let userVotes = {};
 
-        // ===== HELPERS =====
         function escapeHtml(str) {
             const d = document.createElement('div');
             d.textContent = str;
@@ -672,23 +668,21 @@
             if (days < 30) return days + 'd ago';
             return new Date(ts).toLocaleDateString();
         }
-        function loadUserVotes(uid) {
-            userVotes = {};
-        }
 
         // ===== AUTH =====
-        function signInWithGoogle() {
-            auth.signInWithPopup(provider).catch(err => console.error(err));
-        }
-        function signOutUser() {
-            auth.signOut();
+        window.signInWithGoogle = function() {
+            signInWithPopup(auth, provider).catch(err => console.error('Auth error:', err));
+        };
+        window.signOutUser = function() {
+            signOut(auth);
             document.getElementById('userMenu').classList.remove('open');
-        }
-        function toggleUserMenu() {
+        };
+        window.toggleUserMenu = function() {
             document.getElementById('userMenu').classList.toggle('open');
             document.getElementById('notifDropdown').classList.remove('open');
-        }
-        auth.onAuthStateChanged(user => {
+        };
+
+        onAuthStateChanged(auth, user => {
             currentUser = user;
             const avatar = document.getElementById('userAvatar');
             const hint = document.getElementById('commentHint');
@@ -704,7 +698,6 @@
                 input.disabled = false;
                 input.placeholder = 'Share your thoughts...';
                 submitBtn.disabled = false;
-                loadUserVotes(user.uid);
                 listenNotifications(user.uid);
             } else {
                 avatar.style.display = 'none';
@@ -728,7 +721,7 @@
             document.getElementById('commentSubmitBtn').disabled = len === 0 || len > MAX_CHARS || !currentUser;
         });
 
-        function handleComment() {
+        window.handleComment = function() {
             if (!currentUser || !commentInput.value.trim()) return;
             const text = commentInput.value.trim();
             if (text.length > MAX_CHARS) return;
@@ -739,17 +732,18 @@
                 text: text,
                 timestamp: Date.now()
             };
-            const ref = db.ref('comments').push();
-            ref.set(commentData);
+            const newRef = push(dbRef(db, 'comments'));
+            set(newRef, commentData);
             commentInput.value = '';
             charCount.textContent = '0/500';
-            sendNotificationToAll('new_comment', currentUser.displayName, ref.key);
-        }
+            sendNotificationToAll('new_comment', currentUser.displayName, newRef.key);
+        };
 
         function loadComments() {
             const list = document.getElementById('commentsList');
             const loading = document.getElementById('commentsLoading');
-            db.ref('comments').orderByChild('timestamp').on('value', snap => {
+            const commentsRef = dbRef(db, 'comments');
+            onValue(commentsRef, snap => {
                 loading.style.display = 'none';
                 list.innerHTML = '';
                 const comments = [];
@@ -822,8 +816,8 @@
             `;
         }
 
-        function toggleReplyInput(cid, btn) {
-            if (!currentUser) { signInWithGoogle(); return; }
+        window.toggleReplyInput = function(cid, btn) {
+            if (!currentUser) { window.signInWithGoogle(); return; }
             const section = document.getElementById('replies-' + cid);
             const existing = section.querySelector('.reply-input-wrap');
             if (existing) { existing.remove(); return; }
@@ -832,9 +826,9 @@
             wrap.innerHTML = `<textarea placeholder="Write a reply..." rows="1"></textarea><button class="btn-primary" onclick="submitReply('${cid}', this)">Reply</button>`;
             section.appendChild(wrap);
             wrap.querySelector('textarea').focus();
-        }
+        };
 
-        function submitReply(cid, btn) {
+        window.submitReply = function(cid, btn) {
             const wrap = btn.parentElement;
             const text = wrap.querySelector('textarea').value.trim();
             if (!text || !currentUser) return;
@@ -845,39 +839,39 @@
                 text: text,
                 timestamp: Date.now()
             };
-            const ref = db.ref(`comments/${cid}/replies`).push();
-            ref.set(replyData);
+            const newRef = push(dbRef(db, `comments/${cid}/replies`));
+            set(newRef, replyData);
             wrap.remove();
-            db.ref(`comments/${cid}`).once('value', snap => {
+            once(dbRef(db, `comments/${cid}`), snap => {
                 const c = snap.val();
                 if (c && c.uid !== currentUser.uid) {
-                    db.ref(`notifications/${c.uid}`).push({
+                    push(dbRef(db, `notifications/${c.uid}`), {
                         type: 'reply',
                         from: currentUser.displayName,
                         commentId: cid,
-                        text: `replied to your comment`,
+                        text: 'replied to your comment',
                         read: false,
                         timestamp: Date.now()
                     });
                 }
             });
-        }
+        };
 
         // ===== LIKES / DISLIKES =====
-        function toggleLike(cid, btn) {
-            if (!currentUser) { signInWithGoogle(); return; }
-            const likeRef = db.ref(`comments/${cid}/likes/${currentUser.uid}`);
-            const dislikeRef = db.ref(`comments/${cid}/dislikes/${currentUser.uid}`);
-            likeRef.once('value', snap => {
+        window.toggleLike = function(cid, btn) {
+            if (!currentUser) { window.signInWithGoogle(); return; }
+            const likeRef = dbRef(db, `comments/${cid}/likes/${currentUser.uid}`);
+            const dislikeRef = dbRef(db, `comments/${cid}/dislikes/${currentUser.uid}`);
+            once(likeRef, snap => {
                 if (snap.exists()) {
-                    likeRef.remove();
+                    remove(likeRef);
                 } else {
-                    dislikeRef.remove();
-                    likeRef.set(true);
-                    db.ref(`comments/${cid}`).once('value', s => {
+                    remove(dislikeRef);
+                    set(likeRef, true);
+                    once(dbRef(db, `comments/${cid}`), s => {
                         const c = s.val();
                         if (c && c.uid !== currentUser.uid) {
-                            db.ref(`notifications/${c.uid}`).push({
+                            push(dbRef(db, `notifications/${c.uid}`), {
                                 type: 'like', from: currentUser.displayName,
                                 commentId: cid, text: 'liked your comment',
                                 read: false, timestamp: Date.now()
@@ -886,41 +880,42 @@
                     });
                 }
             });
-        }
-        function toggleDislike(cid, btn) {
-            if (!currentUser) { signInWithGoogle(); return; }
-            const likeRef = db.ref(`comments/${cid}/likes/${currentUser.uid}`);
-            const dislikeRef = db.ref(`comments/${cid}/dislikes/${currentUser.uid}`);
-            dislikeRef.once('value', snap => {
-                if (snap.exists()) { dislikeRef.remove(); }
-                else { likeRef.remove(); dislikeRef.set(true); }
+        };
+        window.toggleDislike = function(cid, btn) {
+            if (!currentUser) { window.signInWithGoogle(); return; }
+            const likeRef = dbRef(db, `comments/${cid}/likes/${currentUser.uid}`);
+            const dislikeRef = dbRef(db, `comments/${cid}/dislikes/${currentUser.uid}`);
+            once(dislikeRef, snap => {
+                if (snap.exists()) { remove(dislikeRef); }
+                else { remove(likeRef); set(dislikeRef, true); }
             });
-        }
-        function toggleReplyLike(cid, rid, btn) {
-            if (!currentUser) { signInWithGoogle(); return; }
-            const ref = db.ref(`comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
-            const dref = db.ref(`comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
-            ref.once('value', snap => {
-                if (snap.exists()) ref.remove();
-                else { dref.remove(); ref.set(true); }
+        };
+        window.toggleReplyLike = function(cid, rid, btn) {
+            if (!currentUser) { window.signInWithGoogle(); return; }
+            const ref_ = dbRef(db, `comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
+            const dref = dbRef(db, `comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
+            once(ref_, snap => {
+                if (snap.exists()) remove(ref_);
+                else { remove(dref); set(ref_, true); }
             });
-        }
-        function toggleReplyDislike(cid, rid, btn) {
-            if (!currentUser) { signInWithGoogle(); return; }
-            const ref = db.ref(`comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
-            const dref = db.ref(`comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
-            dref.once('value', snap => {
-                if (snap.exists()) dref.remove();
-                else { ref.remove(); dref.set(true); }
+        };
+        window.toggleReplyDislike = function(cid, rid, btn) {
+            if (!currentUser) { window.signInWithGoogle(); return; }
+            const ref_ = dbRef(db, `comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
+            const dref = dbRef(db, `comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
+            once(dref, snap => {
+                if (snap.exists()) remove(dref);
+                else { remove(ref_); set(dref, true); }
             });
-        }
+        };
 
         // ===== NOTIFICATIONS =====
         function listenNotifications(uid) {
             const bell = document.getElementById('notifBell');
             const badge = document.getElementById('notifBadge');
             const dropdown = document.getElementById('notifDropdown');
-            db.ref(`notifications/${uid}`).orderByChild('timestamp').on('value', snap => {
+            const notifRef = dbRef(db, `notifications/${uid}`);
+            onValue(notifRef, snap => {
                 const notifs = [];
                 let unread = 0;
                 snap.forEach(child => {
@@ -933,39 +928,38 @@
                     bell.style.display = 'block';
                     badge.textContent = unread;
                     badge.style.display = unread > 0 ? 'flex' : 'none';
-                    dropdown.innerHTML = notifs.length === 0 ? '<div class="notif-empty">No notifications yet</div>' :
-                        notifs.map(n => `
-                            <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markRead('${n.id}', '${uid}')">
-                                <div class="notif-text">
-                                    <strong>@${escapeHtml(n.from)}</strong> ${n.text}
-                                    <div class="notif-time">${timeAgo(n.timestamp)}</div>
-                                </div>
+                    dropdown.innerHTML = notifs.map(n => `
+                        <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markRead('${n.id}', '${uid}')">
+                            <div class="notif-text">
+                                <strong>@${escapeHtml(n.from)}</strong> ${n.text}
+                                <div class="notif-time">${timeAgo(n.timestamp)}</div>
                             </div>
-                        `).join('');
+                        </div>
+                    `).join('');
                 } else {
                     bell.style.display = 'none';
                 }
             });
         }
 
-        function markRead(nid, uid) {
-            db.ref(`notifications/${uid}/${nid}/read`).set(true);
-        }
+        window.markRead = function(nid, uid) {
+            set(dbRef(db, `notifications/${uid}/${nid}/read`), true);
+        };
 
-        function toggleNotifications() {
+        window.toggleNotifications = function() {
             document.getElementById('notifDropdown').classList.toggle('open');
             document.getElementById('userMenu').classList.remove('open');
-        }
+        };
 
         function sendNotificationToAll(type, fromName, commentId) {
-            db.ref('comments').once('value', snap => {
+            once(dbRef(db, 'comments'), snap => {
                 const uids = new Set();
                 snap.forEach(child => {
                     const c = child.val();
                     if (c.uid && c.uid !== (currentUser && currentUser.uid)) uids.add(c.uid);
                 });
                 uids.forEach(uid => {
-                    db.ref(`notifications/${uid}`).push({
+                    push(dbRef(db, `notifications/${uid}`), {
                         type: type, from: fromName, commentId: commentId,
                         text: type === 'new_comment' ? 'posted a new comment' : '',
                         read: false, timestamp: Date.now()
