@@ -7,9 +7,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -634,26 +632,10 @@
     </script>
 
     <script>
-        // ===== FIREBASE =====
-        window.onerror = function(msg, url, line) {
-            var el = document.getElementById('commentsLoading');
-            if (el) el.innerHTML = '<span style="color:red;font-size:12px;">JS Error: ' + msg + ' (line ' + line + ')</span>';
-            return false;
-        };
-        try {
-        const firebaseConfig = {
-            apiKey: "AIzaSyA6R3qnH4nojZLyWP12rtJq7Khu0_r9vRA",
-            authDomain: "nova-crafts.firebaseapp.com",
-            databaseURL: "https://nova-crafts-default-rtdb.firebaseio.com",
-            projectId: "nova-crafts",
-            storageBucket: "nova-crafts.firebasestorage.app",
-            messagingSenderId: "899424314171",
-            appId: "1:899424314171:web:e88b6f121fa9c91cf9cd1e"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
-        const provider = new firebase.auth.GoogleAuthProvider();
+        // ===== SUPABASE =====
+        const SUPABASE_URL = 'https://nlkbobumekcrsizmwgvv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sa2JvYnVtZWtjcnNpem13Z3Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDYxODksImV4cCI6MjA5OTg4MjE4OX0.gXEV-MDW3sa1GRymBAn9Zol0kpDE8U-AiNrz2CRLoNQ';
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null;
 
@@ -663,7 +645,7 @@
             return d.innerHTML;
         }
         function timeAgo(ts) {
-            const diff = Date.now() - ts;
+            const diff = Date.now() - new Date(ts).getTime();
             const mins = Math.floor(diff / 60000);
             if (mins < 1) return 'just now';
             if (mins < 60) return mins + 'm ago';
@@ -676,33 +658,55 @@
 
         // ===== AUTH =====
         function signInWithGoogle() {
-            auth.signInWithPopup(provider).catch(err => console.error('Auth error:', err));
+            db.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin + window.location.pathname }
+            });
         }
         function signOutUser() {
-            auth.signOut();
+            db.auth.signOut();
             document.getElementById('userMenu').classList.remove('open');
         }
         function toggleUserMenu() {
             document.getElementById('userMenu').classList.toggle('open');
             document.getElementById('notifDropdown').classList.remove('open');
         }
-        auth.onAuthStateChanged(user => {
-            currentUser = user;
+        function toggleNotifications() {
+            document.getElementById('notifDropdown').classList.toggle('open');
+            document.getElementById('userMenu').classList.remove('open');
+        }
+
+        async function initAuth() {
+            const { data: { session } } = await db.auth.getSession();
+            currentUser = session ? session.user : null;
+            updateAuthUI();
+            db.auth.onAuthStateChange((event, session) => {
+                currentUser = session ? session.user : null;
+                updateAuthUI();
+                if (event === 'SIGNED_IN') loadComments();
+            });
+        }
+
+        function updateAuthUI() {
             const avatar = document.getElementById('userAvatar');
             const hint = document.getElementById('commentHint');
             const input = document.getElementById('commentInput');
             const cAvatar = document.getElementById('commentAvatar');
             const submitBtn = document.getElementById('commentSubmitBtn');
-            if (user) {
+            const bell = document.getElementById('notifBell');
+            bell.style.display = 'none';
+            if (currentUser) {
+                const m = currentUser.user_metadata || {};
+                const name = m.full_name || m.name || 'User';
+                const photo = m.avatar_url || m.picture || '';
                 avatar.style.display = 'block';
-                avatar.style.backgroundImage = `url(${user.photoURL})`;
-                hint.innerHTML = `Commenting as <strong style="color:#6c5ce7">${user.displayName}</strong>`;
+                avatar.style.backgroundImage = 'url(' + photo + ')';
+                hint.innerHTML = 'Commenting as <strong style="color:#6c5ce7">' + escapeHtml(name) + '</strong>';
                 cAvatar.style.display = 'block';
-                cAvatar.src = user.photoURL;
+                cAvatar.src = photo;
                 input.disabled = false;
                 input.placeholder = 'Share your thoughts...';
-                submitBtn.disabled = false;
-                listenNotifications(user.uid);
+                submitBtn.disabled = input.value.trim().length === 0;
             } else {
                 avatar.style.display = 'none';
                 hint.innerHTML = '<a onclick="signInWithGoogle()">Sign in with Google</a> to leave a comment';
@@ -710,113 +714,66 @@
                 input.disabled = true;
                 input.placeholder = 'Sign in to comment...';
                 submitBtn.disabled = true;
-                document.getElementById('notifBell').style.display = 'none';
             }
-        });
+        }
 
         // ===== COMMENTS =====
         const MAX_CHARS = 500;
         const commentInput = document.getElementById('commentInput');
         const charCount = document.getElementById('charCount');
-        commentInput.addEventListener('input', () => {
+        commentInput.addEventListener('input', function() {
             const len = commentInput.value.length;
-            charCount.textContent = `${len}/${MAX_CHARS}`;
+            charCount.textContent = len + '/' + MAX_CHARS;
             charCount.style.color = len > MAX_CHARS ? '#ef4444' : '#555';
             document.getElementById('commentSubmitBtn').disabled = len === 0 || len > MAX_CHARS || !currentUser;
         });
 
-        function handleComment() {
+        async function handleComment() {
             if (!currentUser || !commentInput.value.trim()) return;
             const text = commentInput.value.trim();
             if (text.length > MAX_CHARS) return;
-            const commentData = {
-                uid: currentUser.uid,
-                displayName: currentUser.displayName,
-                photoURL: currentUser.photoURL,
-                text: text,
-                timestamp: Date.now()
-            };
-            const ref = db.ref('comments').push();
-            ref.set(commentData);
+            const m = currentUser.user_metadata || {};
+            const { error } = await db.from('comments').insert({
+                user_id: currentUser.id,
+                display_name: m.full_name || m.name || 'User',
+                photo_url: m.avatar_url || m.picture || '',
+                text: text
+            });
+            if (error) { console.error('Comment error:', error); return; }
             commentInput.value = '';
             charCount.textContent = '0/500';
-            sendNotificationToAll('new_comment', currentUser.displayName, ref.key);
+            loadComments();
         }
 
-        function loadComments() {
+        async function loadComments() {
             const list = document.getElementById('commentsList');
             const loading = document.getElementById('commentsLoading');
-            db.ref('comments').orderByChild('timestamp').on('value', snap => {
-                loading.style.display = 'none';
-                list.innerHTML = '';
-                const comments = [];
-                snap.forEach(child => comments.push({ id: child.key, ...child.val() }));
-                comments.reverse();
-                comments.forEach(c => list.appendChild(createCommentEl(c)));
-            });
-        }
-
-        function createCommentEl(c) {
-            const div = document.createElement('div');
-            div.className = 'comment-item';
-            const time = timeAgo(c.timestamp);
-            const likes = c.likes ? Object.keys(c.likes).length : 0;
-            const dislikes = c.dislikes ? Object.keys(c.dislikes).length : 0;
-            const isLiked = currentUser && c.likes && c.likes[currentUser.uid];
-            const isDisliked = currentUser && c.dislikes && c.dislikes[currentUser.uid];
-            div.innerHTML = `
-                <div class="comment-header">
-                    <img class="comment-user-img" src="${c.photoURL || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%236c5ce7%22 width=%2240%22 height=%2240%22/><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>${(c.displayName||'U')[0].toUpperCase()}</text></svg>'}">
-                    <span class="comment-user-name">@${escapeHtml(c.displayName)}</span>
-                    <span class="comment-time">${time}</span>
-                </div>
-                <div class="comment-text">${escapeHtml(c.text)}</div>
-                <div class="comment-actions">
-                    <button class="comment-action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${c.id}', this)">
-                        <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-                        <span>${likes}</span>
-                    </button>
-                    <button class="comment-action-btn ${isDisliked ? 'disliked' : ''}" onclick="toggleDislike('${c.id}', this)">
-                        <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
-                        <span>${dislikes}</span>
-                    </button>
-                    <button class="comment-action-btn" onclick="toggleReplyInput('${c.id}', this)">
-                        <svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
-                        <span>Reply</span>
-                    </button>
-                </div>
-                <div class="replies-section" id="replies-${c.id}">
-                    ${c.replies ? Object.entries(c.replies).map(([rid, r]) => createReplyHTML(c.id, rid, r)).join('') : ''}
-                </div>
-            `;
-            return div;
-        }
-
-        function createReplyHTML(cid, rid, r) {
-            const likes = r.likes ? Object.keys(r.likes).length : 0;
-            const dislikes = r.dislikes ? Object.keys(r.dislikes).length : 0;
-            const isLiked = currentUser && r.likes && r.likes[currentUser.uid];
-            const isDisliked = currentUser && r.dislikes && r.dislikes[currentUser.uid];
-            return `
-                <div class="reply-item">
-                    <div class="comment-header">
-                        <img class="comment-user-img" src="${r.photoURL || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%236c5ce7%22 width=%2240%22 height=%2240%22/><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-family=%22sans-serif%22>${(r.displayName||'U')[0].toUpperCase()}</text></svg>'}">
-                        <span class="comment-user-name">@${escapeHtml(r.displayName)}</span>
-                        <span class="comment-time">${timeAgo(r.timestamp)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(r.text)}</div>
-                    <div class="comment-actions">
-                        <button class="comment-action-btn ${isLiked ? 'liked' : ''}" onclick="toggleReplyLike('${cid}','${rid}',this)">
-                            <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-                            <span>${likes}</span>
-                        </button>
-                        <button class="comment-action-btn ${isDisliked ? 'disliked' : ''}" onclick="toggleReplyDislike('${cid}','${rid}',this)">
-                            <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
-                            <span>${dislikes}</span>
-                        </button>
-                    </div>
-                </div>
-            `;
+            const { data: comments, error } = await db.from('comments').select('*').order('created_at', { ascending: false });
+            loading.style.display = 'none';
+            if (error) { console.error(error); loading.textContent = 'Error loading comments'; return; }
+            if (!comments || comments.length === 0) { list.innerHTML = '<p style="color:#555;font-size:0.85rem;text-align:center;padding:20px;">No comments yet. Be the first!</p>'; return; }
+            list.innerHTML = '';
+            for (const c of comments) {
+                const { data: votes } = await db.from('comment_votes').select('vote_type,user_id').eq('comment_id', c.id);
+                const likes = votes ? votes.filter(function(v){return v.vote_type==='like'}).length : 0;
+                const dislikes = votes ? votes.filter(function(v){return v.vote_type==='dislike'}).length : 0;
+                const isLiked = currentUser && votes && votes.some(function(v){return v.user_id===currentUser.id && v.vote_type==='like'});
+                const isDisliked = currentUser && votes && votes.some(function(v){return v.user_id===currentUser.id && v.vote_type==='dislike'});
+                const { data: replies } = await db.from('replies').select('*').eq('comment_id', c.id).order('created_at', { ascending: true });
+                const div = document.createElement('div');
+                div.className = 'comment-item';
+                const fallbackImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect fill='%236c5ce7' width='40' height='40'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='16' font-family='sans-serif'%3E" + ((c.display_name||'U')[0].toUpperCase()) + "%3C/text%3E%3C/svg%3E";
+                const imgSrc = c.photo_url ? c.photo_url : fallbackImg;
+                var repliesHtml = '';
+                if (replies && replies.length > 0) {
+                    replies.forEach(function(r) {
+                        const rFallback = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect fill='%236c5ce7' width='40' height='40'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='16' font-family='sans-serif'%3E" + ((r.display_name||'U')[0].toUpperCase()) + "%3C/text%3E%3C/svg%3E";
+                        repliesHtml += '<div class="reply-item"><div class="comment-header"><img class="comment-user-img" src="' + (r.photo_url || rFallback) + '"><span class="comment-user-name">@' + escapeHtml(r.display_name) + '</span><span class="comment-time">' + timeAgo(r.created_at) + '</span></div><div class="comment-text">' + escapeHtml(r.text) + '</div></div>';
+                    });
+                }
+                div.innerHTML = '<div class="comment-header"><img class="comment-user-img" src="' + imgSrc + '"><span class="comment-user-name">@' + escapeHtml(c.display_name) + '</span><span class="comment-time">' + timeAgo(c.created_at) + '</span></div><div class="comment-text">' + escapeHtml(c.text) + '</div><div class="comment-actions"><button class="comment-action-btn ' + (isLiked ? 'liked' : '') + '" onclick="toggleLike(\'' + c.id + '\', this)"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg><span>' + likes + '</span></button><button class="comment-action-btn ' + (isDisliked ? 'disliked' : '') + '" onclick="toggleDislike(\'' + c.id + '\', this)"><svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg><span>' + dislikes + '</span></button><button class="comment-action-btn" onclick="toggleReplyInput(\'' + c.id + '\', this)"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg><span>Reply</span></button></div><div class="replies-section" id="replies-' + c.id + '">' + repliesHtml + '</div>';
+                list.appendChild(div);
+            }
         }
 
         function toggleReplyInput(cid, btn) {
@@ -826,157 +783,58 @@
             if (existing) { existing.remove(); return; }
             const wrap = document.createElement('div');
             wrap.className = 'reply-input-wrap';
-            wrap.innerHTML = `<textarea placeholder="Write a reply..." rows="1"></textarea><button class="btn-primary" onclick="submitReply('${cid}', this)">Reply</button>`;
+            wrap.innerHTML = '<textarea placeholder="Write a reply..." rows="1"></textarea><button class="btn-primary" onclick="submitReply(\'' + cid + '\', this)">Reply</button>';
             section.appendChild(wrap);
             wrap.querySelector('textarea').focus();
         }
 
-        function submitReply(cid, btn) {
+        async function submitReply(cid, btn) {
             const wrap = btn.parentElement;
             const text = wrap.querySelector('textarea').value.trim();
             if (!text || !currentUser) return;
-            const replyData = {
-                uid: currentUser.uid,
-                displayName: currentUser.displayName,
-                photoURL: currentUser.photoURL,
-                text: text,
-                timestamp: Date.now()
-            };
-            const ref = db.ref(`comments/${cid}/replies`).push();
-            ref.set(replyData);
-            wrap.remove();
-            db.ref(`comments/${cid}`).once('value', snap => {
-                const c = snap.val();
-                if (c && c.uid !== currentUser.uid) {
-                    db.ref(`notifications/${c.uid}`).push({
-                        type: 'reply',
-                        from: currentUser.displayName,
-                        commentId: cid,
-                        text: 'replied to your comment',
-                        read: false,
-                        timestamp: Date.now()
-                    });
-                }
+            const m = currentUser.user_metadata || {};
+            const { error } = await db.from('replies').insert({
+                comment_id: cid,
+                user_id: currentUser.id,
+                display_name: m.full_name || m.name || 'User',
+                photo_url: m.avatar_url || m.picture || '',
+                text: text
             });
+            if (error) console.error('Reply error:', error);
+            wrap.remove();
+            loadComments();
         }
 
         // ===== LIKES / DISLIKES =====
-        function toggleLike(cid, btn) {
+        async function toggleLike(cid, btn) {
             if (!currentUser) { signInWithGoogle(); return; }
-            const likeRef = db.ref(`comments/${cid}/likes/${currentUser.uid}`);
-            const dislikeRef = db.ref(`comments/${cid}/dislikes/${currentUser.uid}`);
-            likeRef.once('value', snap => {
-                if (snap.exists()) {
-                    likeRef.remove();
-                } else {
-                    dislikeRef.remove();
-                    likeRef.set(true);
-                    db.ref(`comments/${cid}`).once('value', s => {
-                        const c = s.val();
-                        if (c && c.uid !== currentUser.uid) {
-                            db.ref(`notifications/${c.uid}`).push({
-                                type: 'like', from: currentUser.displayName,
-                                commentId: cid, text: 'liked your comment',
-                                read: false, timestamp: Date.now()
-                            });
-                        }
-                    });
-                }
-            });
-        }
-        function toggleDislike(cid, btn) {
-            if (!currentUser) { signInWithGoogle(); return; }
-            const likeRef = db.ref(`comments/${cid}/likes/${currentUser.uid}`);
-            const dislikeRef = db.ref(`comments/${cid}/dislikes/${currentUser.uid}`);
-            dislikeRef.once('value', snap => {
-                if (snap.exists()) { dislikeRef.remove(); }
-                else { likeRef.remove(); dislikeRef.set(true); }
-            });
-        }
-        function toggleReplyLike(cid, rid, btn) {
-            if (!currentUser) { signInWithGoogle(); return; }
-            const ref = db.ref(`comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
-            const dref = db.ref(`comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
-            ref.once('value', snap => {
-                if (snap.exists()) ref.remove();
-                else { dref.remove(); ref.set(true); }
-            });
-        }
-        function toggleReplyDislike(cid, rid, btn) {
-            if (!currentUser) { signInWithGoogle(); return; }
-            const ref = db.ref(`comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
-            const dref = db.ref(`comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
-            dref.once('value', snap => {
-                if (snap.exists()) dref.remove();
-                else { ref.remove(); dref.set(true); }
-            });
+            const { data: existing } = await db.from('comment_votes').select('*').eq('comment_id', cid).eq('user_id', currentUser.id).maybeSingle();
+            if (existing) {
+                if (existing.vote_type === 'like') await db.from('comment_votes').delete().eq('id', existing.id);
+                else await db.from('comment_votes').update({ vote_type: 'like' }).eq('id', existing.id);
+            } else {
+                await db.from('comment_votes').insert({ comment_id: cid, user_id: currentUser.id, vote_type: 'like' });
+            }
+            loadComments();
         }
 
-        // ===== NOTIFICATIONS =====
-        function listenNotifications(uid) {
-            const bell = document.getElementById('notifBell');
-            const badge = document.getElementById('notifBadge');
-            const dropdown = document.getElementById('notifDropdown');
-            db.ref(`notifications/${uid}`).orderByChild('timestamp').on('value', snap => {
-                const notifs = [];
-                let unread = 0;
-                snap.forEach(child => {
-                    const n = { id: child.key, ...child.val() };
-                    notifs.push(n);
-                    if (!n.read) unread++;
-                });
-                notifs.reverse();
-                if (notifs.length > 0 && currentUser) {
-                    bell.style.display = 'block';
-                    badge.textContent = unread;
-                    badge.style.display = unread > 0 ? 'flex' : 'none';
-                    dropdown.innerHTML = notifs.map(n => `
-                        <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markRead('${n.id}', '${uid}')">
-                            <div class="notif-text">
-                                <strong>@${escapeHtml(n.from)}</strong> ${n.text}
-                                <div class="notif-time">${timeAgo(n.timestamp)}</div>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    bell.style.display = 'none';
-                }
-            });
-        }
-
-        function markRead(nid, uid) {
-            db.ref(`notifications/${uid}/${nid}/read`).set(true);
-        }
-
-        function toggleNotifications() {
-            document.getElementById('notifDropdown').classList.toggle('open');
-            document.getElementById('userMenu').classList.remove('open');
-        }
-
-        function sendNotificationToAll(type, fromName, commentId) {
-            db.ref('comments').once('value', snap => {
-                const uids = new Set();
-                snap.forEach(child => {
-                    const c = child.val();
-                    if (c.uid && c.uid !== (currentUser && currentUser.uid)) uids.add(c.uid);
-                });
-                uids.forEach(uid => {
-                    db.ref(`notifications/${uid}`).push({
-                        type: type, from: fromName, commentId: commentId,
-                        text: type === 'new_comment' ? 'posted a new comment' : '',
-                        read: false, timestamp: Date.now()
-                    });
-                });
-            });
+        async function toggleDislike(cid, btn) {
+            if (!currentUser) { signInWithGoogle(); return; }
+            const { data: existing } = await db.from('comment_votes').select('*').eq('comment_id', cid).eq('user_id', currentUser.id).maybeSingle();
+            if (existing) {
+                if (existing.vote_type === 'dislike') await db.from('comment_votes').delete().eq('id', existing.id);
+                else await db.from('comment_votes').update({ vote_type: 'dislike' }).eq('id', existing.id);
+            } else {
+                await db.from('comment_votes').insert({ comment_id: cid, user_id: currentUser.id, vote_type: 'dislike' });
+            }
+            loadComments();
         }
 
         // ===== INIT =====
-        loadComments();
-        } catch(e) {
-            var el = document.getElementById('commentsLoading');
-            if (el) el.innerHTML = '<span style="color:red;font-size:12px;">JS Error: ' + e.message + '</span>';
-            console.error('Firebase error:', e);
-        }
+        (async function() {
+            await initAuth();
+            await loadComments();
+        })();
     </script>
 
 </body>
