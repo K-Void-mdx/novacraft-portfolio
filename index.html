@@ -635,6 +635,12 @@
 
     <script>
         // ===== FIREBASE =====
+        window.onerror = function(msg, url, line) {
+            var el = document.getElementById('commentsLoading');
+            if (el) el.innerHTML = '<span style="color:red;font-size:12px;">JS Error: ' + msg + ' (line ' + line + ')</span>';
+            return false;
+        };
+        try {
         const firebaseConfig = {
             apiKey: "AIzaSyA6R3qnH4nojZLyWP12rtJq7Khu0_r9vRA",
             authDomain: "nova-crafts.firebaseapp.com",
@@ -966,6 +972,11 @@
 
         // ===== INIT =====
         loadComments();
+        } catch(e) {
+            var el = document.getElementById('commentsLoading');
+            if (el) el.innerHTML = '<span style="color:red;font-size:12px;">JS Error: ' + e.message + '</span>';
+            console.error('Firebase error:', e);
+        }
     </script>
 
 </body>
