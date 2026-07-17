@@ -633,7 +633,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-        import { getDatabase, ref as dbRef, push, set, onValue, once, remove, orderByChild, get } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+        import { getDatabase, ref as dbRef, push, set, onValue, remove, get, query, orderByChild } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA6R3qnH4nojZLyWP12rtJq7Khu0_r9vRA",
@@ -842,7 +842,7 @@
             const newRef = push(dbRef(db, `comments/${cid}/replies`));
             set(newRef, replyData);
             wrap.remove();
-            once(dbRef(db, `comments/${cid}`), snap => {
+            get(dbRef(db, `comments/${cid}`)).then(snap => {
                 const c = snap.val();
                 if (c && c.uid !== currentUser.uid) {
                     push(dbRef(db, `notifications/${c.uid}`), {
@@ -862,13 +862,13 @@
             if (!currentUser) { window.signInWithGoogle(); return; }
             const likeRef = dbRef(db, `comments/${cid}/likes/${currentUser.uid}`);
             const dislikeRef = dbRef(db, `comments/${cid}/dislikes/${currentUser.uid}`);
-            once(likeRef, snap => {
+            get(likeRef).then(snap => {
                 if (snap.exists()) {
                     remove(likeRef);
                 } else {
                     remove(dislikeRef);
                     set(likeRef, true);
-                    once(dbRef(db, `comments/${cid}`), s => {
+                    get(dbRef(db, `comments/${cid}`)).then(s => {
                         const c = s.val();
                         if (c && c.uid !== currentUser.uid) {
                             push(dbRef(db, `notifications/${c.uid}`), {
@@ -885,7 +885,7 @@
             if (!currentUser) { window.signInWithGoogle(); return; }
             const likeRef = dbRef(db, `comments/${cid}/likes/${currentUser.uid}`);
             const dislikeRef = dbRef(db, `comments/${cid}/dislikes/${currentUser.uid}`);
-            once(dislikeRef, snap => {
+            get(dislikeRef).then(snap => {
                 if (snap.exists()) { remove(dislikeRef); }
                 else { remove(likeRef); set(dislikeRef, true); }
             });
@@ -894,7 +894,7 @@
             if (!currentUser) { window.signInWithGoogle(); return; }
             const ref_ = dbRef(db, `comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
             const dref = dbRef(db, `comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
-            once(ref_, snap => {
+            get(ref_).then(snap => {
                 if (snap.exists()) remove(ref_);
                 else { remove(dref); set(ref_, true); }
             });
@@ -903,7 +903,7 @@
             if (!currentUser) { window.signInWithGoogle(); return; }
             const ref_ = dbRef(db, `comments/${cid}/replies/${rid}/likes/${currentUser.uid}`);
             const dref = dbRef(db, `comments/${cid}/replies/${rid}/dislikes/${currentUser.uid}`);
-            once(dref, snap => {
+            get(dref).then(snap => {
                 if (snap.exists()) remove(dref);
                 else { remove(ref_); set(dref, true); }
             });
@@ -952,7 +952,7 @@
         };
 
         function sendNotificationToAll(type, fromName, commentId) {
-            once(dbRef(db, 'comments'), snap => {
+            get(dbRef(db, 'comments')).then(snap => {
                 const uids = new Set();
                 snap.forEach(child => {
                     const c = child.val();
