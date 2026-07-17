@@ -484,23 +484,197 @@
     </footer>
 
     <script>
-        // ===== FIREBASE CONFIG (REPLACE WITH YOUR OWN) =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyA6R3qnH4nojZLyWP12rtJq7Khu0_r9vRA",
-            authDomain: "nova-crafts.firebaseapp.com",
-            databaseURL: "https://nova-crafts-default-rtdb.firebaseio.com",
-            projectId: "nova-crafts",
-            storageBucket: "nova-crafts.firebasestorage.app",
-            messagingSenderId: "899424314171",
-            appId: "1:899424314171:web:e88b6f121fa9c91cf9cd1e"
+        // ===== SCROLL ANIMATIONS =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // ===== GEO-PRICING =====
+        const currencies = {
+            NG: { sym: '₦', rate: 1, dec: 0 },
+            US: { sym: '$', rate: 0.000625, dec: 2 },
+            GB: { sym: '£', rate: 0.00049, dec: 2 },
+            EU: { sym: '€', rate: 0.00057, dec: 2 },
+            CA: { sym: 'C$', rate: 0.00085, dec: 2 },
+            AU: { sym: 'A$', rate: 0.00095, dec: 2 },
+            JP: { sym: '¥', rate: 0.095, dec: 0 },
+            IN: { sym: '₹', rate: 0.052, dec: 0 },
+            BR: { sym: 'R$', rate: 0.0032, dec: 2 },
+            MX: { sym: 'MX$', rate: 0.011, dec: 2 },
+            ZA: { sym: 'R', rate: 0.0115, dec: 2 },
+            GH: { sym: 'GH₵', rate: 0.008, dec: 2 },
+            KE: { sym: 'KSh', rate: 0.08, dec: 0 },
+            EG: { sym: 'E£', rate: 0.03, dec: 2 },
+            TZ: { sym: 'TSh', rate: 1.6, dec: 0 },
+            UG: { sym: 'USh', rate: 2.3, dec: 0 },
+            PK: { sym: 'Rs', rate: 0.17, dec: 0 },
+            BD: { sym: '৳', rate: 0.067, dec: 0 },
+            PH: { sym: '₱', rate: 0.035, dec: 0 },
+            ID: { sym: 'Rp', rate: 9.8, dec: 0 },
+            MY: { sym: 'RM', rate: 0.0028, dec: 2 },
+            SG: { sym: 'S$', rate: 0.00084, dec: 2 },
+            TH: { sym: '฿', rate: 0.022, dec: 2 },
+            VN: { sym: '₫', rate: 15.8, dec: 0 },
+            KR: { sym: '₩', rate: 0.84, dec: 0 },
+            CN: { sym: '¥', rate: 0.0045, dec: 2 },
+            TR: { sym: '₺', rate: 0.021, dec: 2 },
+            AE: { sym: 'AED', rate: 0.0023, dec: 2 },
+            SA: { sym: 'SAR', rate: 0.0023, dec: 2 },
+            PL: { sym: 'zł', rate: 0.0025, dec: 2 },
+            CH: { sym: 'CHF', rate: 0.00055, dec: 2 },
+            SE: { sym: 'kr', rate: 0.0065, dec: 2 },
+            NO: { sym: 'kr', rate: 0.0067, dec: 2 },
+            DK: { sym: 'kr', rate: 0.0043, dec: 2 },
+            NZ: { sym: 'NZ$', rate: 0.001, dec: 2 },
+            AR: { sym: 'AR$', rate: 0.75, dec: 2 },
+            CO: { sym: 'COP', rate: 2.5, dec: 0 },
+            CL: { sym: 'CL$', rate: 580, dec: 0 },
+            PE: { sym: 'S/', rate: 0.0024, dec: 2 },
+            CM: { sym: 'FCFA', rate: 0.38, dec: 0 },
+            CI: { sym: 'FCFA', rate: 0.38, dec: 0 },
+            SN: { sym: 'FCFA', rate: 0.38, dec: 0 },
+            DZ: { sym: 'DA', rate: 0.082, dec: 2 },
+            MA: { sym: 'MAD', rate: 0.0062, dec: 2 },
+            TN: { sym: 'DT', rate: 0.0019, dec: 2 },
+            ET: { sym: 'Br', rate: 0.034, dec: 2 },
+            RW: { sym: 'FRw', rate: 0.84, dec: 0 },
+            CR: { sym: '₡', rate: 0.32, dec: 2 },
+            CU: { sym: 'CUP', rate: 15, dec: 2 },
+            PA: { sym: 'B/.', rate: 0.00063, dec: 2 },
+            PR: { sym: '$', rate: 0.000625, dec: 2 },
+            GT: { sym: 'Q', rate: 0.0049, dec: 2 },
+            HN: { sym: 'L', rate: 0.016, dec: 2 },
+            NI: { sym: 'C$', rate: 0.023, dec: 2 },
+            SV: { sym: '$', rate: 0.000625, dec: 2 },
+            LK: { sym: 'Rs', rate: 0.19, dec: 0 },
+            NP: { sym: 'Rs', rate: 0.083, dec: 0 },
+            MM: { sym: 'K', rate: 1.3, dec: 0 },
+            KH: { sym: '៛', rate: 2.55, dec: 0 },
+            TW: { sym: 'NT$', rate: 0.02, dec: 2 },
+            HK: { sym: 'HK$', rate: 0.0049, dec: 2 },
+            IS: { sym: 'kr', rate: 0.085, dec: 2 },
+            CZ: { sym: 'Kč', rate: 0.014, dec: 2 },
+            HU: { sym: 'Ft', rate: 0.23, dec: 0 },
+            RO: { sym: 'lei', rate: 0.0029, dec: 2 },
+            BG: { sym: 'лв', rate: 0.0011, dec: 2 },
+            HR: { sym: '€', rate: 0.00057, dec: 2 },
+            UA: { sym: '₴', rate: 0.026, dec: 2 },
+            RU: { sym: '₽', rate: 0.057, dec: 2 },
+            IL: { sym: '₪', rate: 0.0023, dec: 2 },
+            KW: { sym: 'KD', rate: 0.00019, dec: 3 },
+            QA: { sym: 'QR', rate: 0.0023, dec: 2 },
+            BH: { sym: 'BD', rate: 0.0023, dec: 2 },
+            OM: { sym: 'OMR', rate: 0.00024, dec: 3 },
+            JO: { sym: 'JD', rate: 0.00044, dec: 3 },
+            LB: { sym: 'L£', rate: 0.94, dec: 0 },
         };
-        firebase.initializeApp(firebaseConfig);
+        const regionMap = {
+            NG:'NG', US:'US', CA:'CA', MX:'MX', GT:'GT', HN:'HN', NI:'NI', CR:'CR', PA:'PA', CU:'CU', SV:'SV', PR:'PR',
+            GB:'GB', IE:'EU', DE:'EU', FR:'EU', ES:'EU', IT:'EU', NL:'EU', BE:'EU', AT:'EU', PT:'EU',
+            PL:'PL', CZ:'CZ', HU:'HU', RO:'RO', BG:'BG', HR:'HR', SE:'SE', NO:'NO', DK:'DK', IS:'IS',
+            FI:'EU', LT:'EU', LV:'EU', EE:'EU', SI:'EU', SK:'EU', CH:'CH', UA:'UA', RU:'RU',
+            AU:'AU', NZ:'NZ', JP:'JP', KR:'KR', CN:'CN', TW:'TW', HK:'HK',
+            IN:'IN', PK:'PK', BD:'BD', LK:'LK', NP:'NP', MM:'MM',
+            TH:'TH', VN:'VN', PH:'PH', ID:'ID', MY:'MY', SG:'SG', KH:'KH',
+            TR:'TR', IL:'IL', KW:'KW', QA:'QA', AE:'AE', SA:'SA', BH:'BH', OM:'OM', JO:'JO', LB:'LB',
+            GH:'GH', KE:'KE', ZA:'ZA', EG:'EG', TZ:'TZ', UG:'UG', ET:'ET',
+            CM:'CM', CI:'CI', SN:'SN', RW:'RW', DZ:'DZ', MA:'MA', TN:'TN',
+            BR:'BR', AR:'AR', CO:'CO', CL:'CL', PE:'PE',
+        };
+        function formatPrice(ngn, curr) {
+            const val = ngn * curr.rate;
+            if (val >= 1000 && curr.dec === 0) return curr.sym + Math.round(val).toLocaleString();
+            return curr.sym + val.toFixed(curr.dec);
+        }
+        fetch('https://ipapi.co/json/')
+            .then(r => r.json())
+            .then(data => {
+                const currCode = regionMap[data.country_code];
+                if (currCode && currCode !== 'NG') {
+                    const curr = currencies[currCode];
+                    document.querySelectorAll('.price[data-ng]').forEach(el => {
+                        el.textContent = formatPrice(parseInt(el.getAttribute('data-ng')), curr);
+                    });
+                }
+            }).catch(() => {});
+
+        // ===== 3D TILT =====
+        document.querySelectorAll('.service-card, .price-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left, y = e.clientY - rect.top;
+                card.style.transform = `perspective(800px) rotateX(${(y - rect.height/2)/20}deg) rotateY(${(rect.width/2 - x)/20}deg) translateY(-4px)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+
+        // ===== PARTICLES =====
+        const pc = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            p.style.animationDelay = (Math.random() * 10) + 's';
+            p.style.width = p.style.height = (Math.random() * 4 + 2) + 'px';
+            pc.appendChild(p);
+        }
+
+        // ===== CLOSE DROPDOWNS ON OUTSIDE CLICK =====
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.notif-bell') && !e.target.closest('.notif-dropdown'))
+                document.getElementById('notifDropdown').classList.remove('open');
+            if (!e.target.closest('.user-avatar') && !e.target.closest('.user-menu'))
+                document.getElementById('userMenu').classList.remove('open');
+        });
+    </script>
+
+    <script>
+        // ===== FIREBASE =====
+        try {
+            const firebaseConfig = {
+                apiKey: "AIzaSyA6R3qnH4nojZLyWP12rtJq7Khu0_r9vRA",
+                authDomain: "nova-crafts.firebaseapp.com",
+                databaseURL: "https://nova-crafts-default-rtdb.firebaseio.com",
+                projectId: "nova-crafts",
+                storageBucket: "nova-crafts.firebasestorage.app",
+                messagingSenderId: "899424314171",
+                appId: "1:899424314171:web:e88b6f121fa9c91cf9cd1e"
+            };
+            firebase.initializeApp(firebaseConfig);
+        } catch(e) {
+            console.error('Firebase init failed:', e);
+        }
         const auth = firebase.auth();
         const db = firebase.database();
         const provider = new firebase.auth.GoogleAuthProvider();
 
         let currentUser = null;
         let userVotes = {};
+
+        // ===== HELPERS =====
+        function escapeHtml(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+        function timeAgo(ts) {
+            const diff = Date.now() - ts;
+            const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'just now';
+            if (mins < 60) return mins + 'm ago';
+            const hrs = Math.floor(mins / 60);
+            if (hrs < 24) return hrs + 'h ago';
+            const days = Math.floor(hrs / 24);
+            if (days < 30) return days + 'd ago';
+            return new Date(ts).toLocaleDateString();
+        }
+        function loadUserVotes(uid) {
+            userVotes = {};
+        }
 
         // ===== AUTH =====
         function signInWithGoogle() {
@@ -674,7 +848,6 @@
             const ref = db.ref(`comments/${cid}/replies`).push();
             ref.set(replyData);
             wrap.remove();
-            // Notify comment author
             db.ref(`comments/${cid}`).once('value', snap => {
                 const c = snap.val();
                 if (c && c.uid !== currentUser.uid) {
@@ -701,7 +874,6 @@
                 } else {
                     dislikeRef.remove();
                     likeRef.set(true);
-                    // Notify comment author
                     db.ref(`comments/${cid}`).once('value', s => {
                         const c = s.val();
                         if (c && c.uid !== currentUser.uid) {
@@ -801,174 +973,6 @@
                 });
             });
         }
-
-        // ===== HELPERS =====
-        function escapeHtml(str) {
-            const d = document.createElement('div');
-            d.textContent = str;
-            return d.innerHTML;
-        }
-        function timeAgo(ts) {
-            const diff = Date.now() - ts;
-            const mins = Math.floor(diff / 60000);
-            if (mins < 1) return 'just now';
-            if (mins < 60) return mins + 'm ago';
-            const hrs = Math.floor(mins / 60);
-            if (hrs < 24) return hrs + 'h ago';
-            const days = Math.floor(hrs / 24);
-            if (days < 30) return days + 'd ago';
-            return new Date(ts).toLocaleDateString();
-        }
-        function loadUserVotes(uid) {
-            userVotes = {};
-        }
-
-        // ===== SCROLL ANIMATIONS =====
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-        // ===== GEO-PRICING =====
-        const currencies = {
-            NG: { sym: '₦', rate: 1, dec: 0 },
-            US: { sym: '$', rate: 0.000625, dec: 2 },
-            GB: { sym: '£', rate: 0.00049, dec: 2 },
-            EU: { sym: '€', rate: 0.00057, dec: 2 },
-            CA: { sym: 'C$', rate: 0.00085, dec: 2 },
-            AU: { sym: 'A$', rate: 0.00095, dec: 2 },
-            JP: { sym: '¥', rate: 0.095, dec: 0 },
-            IN: { sym: '₹', rate: 0.052, dec: 0 },
-            BR: { sym: 'R$', rate: 0.0032, dec: 2 },
-            MX: { sym: 'MX$', rate: 0.011, dec: 2 },
-            ZA: { sym: 'R', rate: 0.0115, dec: 2 },
-            GH: { sym: 'GH₵', rate: 0.008, dec: 2 },
-            KE: { sym: 'KSh', rate: 0.08, dec: 0 },
-            EG: { sym: 'E£', rate: 0.03, dec: 2 },
-            TZ: { sym: 'TSh', rate: 1.6, dec: 0 },
-            UG: { sym: 'USh', rate: 2.3, dec: 0 },
-            PK: { sym: 'Rs', rate: 0.17, dec: 0 },
-            BD: { sym: '৳', rate: 0.067, dec: 0 },
-            PH: { sym: '₱', rate: 0.035, dec: 0 },
-            ID: { sym: 'Rp', rate: 9.8, dec: 0 },
-            MY: { sym: 'RM', rate: 0.0028, dec: 2 },
-            SG: { sym: 'S$', rate: 0.00084, dec: 2 },
-            TH: { sym: '฿', rate: 0.022, dec: 2 },
-            VN: { sym: '₫', rate: 15.8, dec: 0 },
-            KR: { sym: '₩', rate: 0.84, dec: 0 },
-            CN: { sym: '¥', rate: 0.0045, dec: 2 },
-            TR: { sym: '₺', rate: 0.021, dec: 2 },
-            AE: { sym: 'AED', rate: 0.0023, dec: 2 },
-            SA: { sym: 'SAR', rate: 0.0023, dec: 2 },
-            PL: { sym: 'zł', rate: 0.0025, dec: 2 },
-            CH: { sym: 'CHF', rate: 0.00055, dec: 2 },
-            SE: { sym: 'kr', rate: 0.0065, dec: 2 },
-            NO: { sym: 'kr', rate: 0.0067, dec: 2 },
-            DK: { sym: 'kr', rate: 0.0043, dec: 2 },
-            NZ: { sym: 'NZ$', rate: 0.001, dec: 2 },
-            AR: { sym: 'AR$', rate: 0.75, dec: 2 },
-            CO: { sym: 'COP', rate: 2.5, dec: 0 },
-            CL: { sym: 'CL$', rate: 580, dec: 0 },
-            PE: { sym: 'S/', rate: 0.0024, dec: 2 },
-            CM: { sym: 'FCFA', rate: 0.38, dec: 0 },
-            CI: { sym: 'FCFA', rate: 0.38, dec: 0 },
-            SN: { sym: 'FCFA', rate: 0.38, dec: 0 },
-            DZ: { sym: 'DA', rate: 0.082, dec: 2 },
-            MA: { sym: 'MAD', rate: 0.0062, dec: 2 },
-            TN: { sym: 'DT', rate: 0.0019, dec: 2 },
-            ET: { sym: 'Br', rate: 0.034, dec: 2 },
-            RW: { sym: 'FRw', rate: 0.84, dec: 0 },
-            CR: { sym: '₡', rate: 0.32, dec: 2 },
-            CU: { sym: 'CUP', rate: 15, dec: 2 },
-            PA: { sym: 'B/.', rate: 0.00063, dec: 2 },
-            PR: { sym: '$', rate: 0.000625, dec: 2 },
-            GT: { sym: 'Q', rate: 0.0049, dec: 2 },
-            HN: { sym: 'L', rate: 0.016, dec: 2 },
-            NI: { sym: 'C$', rate: 0.023, dec: 2 },
-            SV: { sym: '$', rate: 0.000625, dec: 2 },
-            LK: { sym: 'Rs', rate: 0.19, dec: 0 },
-            NP: { sym: 'Rs', rate: 0.083, dec: 0 },
-            MM: { sym: 'K', rate: 1.3, dec: 0 },
-            KH: { sym: '៛', rate: 2.55, dec: 0 },
-            TW: { sym: 'NT$', rate: 0.02, dec: 2 },
-            HK: { sym: 'HK$', rate: 0.0049, dec: 2 },
-            IS: { sym: 'kr', rate: 0.085, dec: 2 },
-            CZ: { sym: 'Kč', rate: 0.014, dec: 2 },
-            HU: { sym: 'Ft', rate: 0.23, dec: 0 },
-            RO: { sym: 'lei', rate: 0.0029, dec: 2 },
-            BG: { sym: 'лв', rate: 0.0011, dec: 2 },
-            HR: { sym: '€', rate: 0.00057, dec: 2 },
-            UA: { sym: '₴', rate: 0.026, dec: 2 },
-            RU: { sym: '₽', rate: 0.057, dec: 2 },
-            IL: { sym: '₪', rate: 0.0023, dec: 2 },
-            KW: { sym: 'KD', rate: 0.00019, dec: 3 },
-            QA: { sym: 'QR', rate: 0.0023, dec: 2 },
-            BH: { sym: 'BD', rate: 0.0023, dec: 2 },
-            OM: { sym: 'OMR', rate: 0.00024, dec: 3 },
-            JO: { sym: 'JD', rate: 0.00044, dec: 3 },
-            LB: { sym: 'L£', rate: 0.94, dec: 0 },
-        };
-        const regionMap = {
-            NG:'NG', US:'US', CA:'CA', MX:'MX', GT:'GT', HN:'HN', NI:'NI', CR:'CR', PA:'PA', CU:'CU', SV:'SV', PR:'PR',
-            GB:'GB', IE:'EU', DE:'EU', FR:'EU', ES:'EU', IT:'EU', NL:'EU', BE:'EU', AT:'EU', PT:'EU',
-            PL:'PL', CZ:'CZ', HU:'HU', RO:'RO', BG:'BG', HR:'HR', SE:'SE', NO:'NO', DK:'DK', IS:'IS',
-            FI:'EU', LT:'EU', LV:'EU', EE:'EU', SI:'EU', SK:'EU', CH:'CH', UA:'UA', RU:'RU',
-            AU:'AU', NZ:'NZ', JP:'JP', KR:'KR', CN:'CN', TW:'TW', HK:'HK',
-            IN:'IN', PK:'PK', BD:'BD', LK:'LK', NP:'NP', MM:'MM',
-            TH:'TH', VN:'VN', PH:'PH', ID:'ID', MY:'MY', SG:'SG', KH:'KH',
-            TR:'TR', IL:'IL', KW:'KW', QA:'QA', AE:'AE', SA:'SA', BH:'BH', OM:'OM', JO:'JO', LB:'LB',
-            GH:'GH', KE:'KE', ZA:'ZA', EG:'EG', TZ:'TZ', UG:'UG', ET:'ET',
-            CM:'CM', CI:'CI', SN:'SN', RW:'RW', DZ:'DZ', MA:'MA', TN:'TN',
-            BR:'BR', AR:'AR', CO:'CO', CL:'CL', PE:'PE',
-        };
-        function formatPrice(ngn, curr) {
-            const val = ngn * curr.rate;
-            if (val >= 1000 && curr.dec === 0) return curr.sym + Math.round(val).toLocaleString();
-            return curr.sym + val.toFixed(curr.dec);
-        }
-        fetch('https://ipapi.co/json/')
-            .then(r => r.json())
-            .then(data => {
-                const currCode = regionMap[data.country_code];
-                if (currCode && currCode !== 'NG') {
-                    const curr = currencies[currCode];
-                    document.querySelectorAll('.price[data-ng]').forEach(el => {
-                        el.textContent = formatPrice(parseInt(el.getAttribute('data-ng')), curr);
-                    });
-                }
-            }).catch(() => {});
-
-        // ===== 3D TILT =====
-        document.querySelectorAll('.service-card, .price-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left, y = e.clientY - rect.top;
-                card.style.transform = `perspective(800px) rotateX(${(y - rect.height/2)/20}deg) rotateY(${(rect.width/2 - x)/20}deg) translateY(-4px)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
-            });
-        });
-
-        // ===== PARTICLES =====
-        const pc = document.getElementById('particles');
-        for (let i = 0; i < 20; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.animationDuration = (Math.random() * 15 + 10) + 's';
-            p.style.animationDelay = (Math.random() * 10) + 's';
-            p.style.width = p.style.height = (Math.random() * 4 + 2) + 'px';
-            pc.appendChild(p);
-        }
-
-        // ===== CLOSE DROPDOWNS ON OUTSIDE CLICK =====
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.notif-bell') && !e.target.closest('.notif-dropdown'))
-                document.getElementById('notifDropdown').classList.remove('open');
-            if (!e.target.closest('.user-avatar') && !e.target.closest('.user-menu'))
-                document.getElementById('userMenu').classList.remove('open');
-        });
 
         // ===== INIT =====
         loadComments();
