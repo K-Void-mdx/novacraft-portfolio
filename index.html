@@ -3,8 +3,10 @@
 <head>
     <script>
     (function(){
-        var t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', t);
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        function apply(){ document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark'); }
+        apply();
+        mq.addEventListener('change', apply);
     })();
     </script>
     <meta charset="UTF-8">
@@ -53,6 +55,10 @@
             background: radial-gradient(circle, rgba(108, 92, 231, 0.12) 0%, transparent 70%);
             pointer-events: none; animation: pulse 6s ease-in-out infinite;
         }
+        .hero::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 200px;
+            background: linear-gradient(transparent, rgba(10,10,10,1)); pointer-events: none; z-index: 1;
+        }
         @keyframes pulse {
             0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
             50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
@@ -79,9 +85,15 @@
         .btn-primary {
             padding: 14px 32px; background: #6c5ce7; color: #fff; border: none;
             border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
-            text-decoration: none; transition: all 0.3s;
+            text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden;
         }
-        .btn-primary:hover { background: #5a4bd1; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3); }
+        .btn-primary::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            transform: rotate(45deg) translateX(-100%); transition: transform 0.6s;
+        }
+        .btn-primary:hover::after { transform: rotate(45deg) translateX(100%); }
+        .btn-primary:hover { background: #5a4bd1; transform: translateY(-3px); box-shadow: 0 12px 35px rgba(108, 92, 231, 0.4); }
         .btn-secondary {
             padding: 14px 32px; background: transparent; color: #fff;
             border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
@@ -113,7 +125,7 @@
             background: rgba(255,255,255,0.02); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             transform-style: preserve-3d; perspective: 800px;
         }
-        .service-card:hover { border-color: rgba(108, 92, 231, 0.3); background: rgba(108, 92, 231, 0.05); }
+        .service-card:hover { border-color: rgba(108, 92, 231, 0.4); background: rgba(108, 92, 231, 0.06); box-shadow: 0 20px 50px rgba(108, 92, 231, 0.12); }
         .service-img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
         .service-card h3 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 12px; }
         .service-card p { color: #888; font-size: 0.95rem; line-height: 1.6; }
@@ -125,7 +137,7 @@
             background: rgba(255,255,255,0.02); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             transform-style: preserve-3d; perspective: 1000px; cursor: pointer; text-decoration: none; color: inherit; display: block;
         }
-        .work-card:hover { transform: translateY(-8px) rotateX(2deg); border-color: rgba(108, 92, 231, 0.4); box-shadow: 0 20px 50px rgba(108, 92, 231, 0.15); }
+        .work-card:hover { transform: translateY(-12px) rotateX(3deg) rotateY(-2deg); border-color: rgba(108, 92, 231, 0.5); box-shadow: 0 25px 60px rgba(108, 92, 231, 0.2); }
         .work-img {
             width: 100%; height: 220px; object-fit: cover; display: block; transition: transform 0.5s;
         }
@@ -139,12 +151,14 @@
         .particle {
             position: absolute; width: 4px; height: 4px; border-radius: 50%;
             background: rgba(108, 92, 231, 0.3); animation: float linear infinite;
+            filter: blur(0.5px);
         }
         @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
+            0% { transform: translateY(100vh) rotate(0deg) scale(0); opacity: 0; }
+            10% { opacity: 1; transform: translateY(85vh) rotate(72deg) scale(1); }
+            50% { opacity: 0.8; }
             90% { opacity: 1; }
-            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+            100% { transform: translateY(-10vh) rotate(720deg) scale(0.5); opacity: 0; }
         }
 
         /* PRICING */
@@ -154,8 +168,12 @@
             background: rgba(255,255,255,0.02); text-align: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative; transform-style: preserve-3d;
         }
-        .price-card:hover { transform: translateY(-6px); }
-        .price-card.featured { border-color: rgba(108, 92, 231, 0.4); background: rgba(108, 92, 231, 0.05); }
+        .price-card:hover { transform: translateY(-8px) scale(1.02); }
+        .price-card.featured { border-color: rgba(108, 92, 231, 0.5); background: rgba(108, 92, 231, 0.06); animation: featuredGlow 3s ease-in-out infinite; }
+        @keyframes featuredGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(108,92,231,0.1); }
+            50% { box-shadow: 0 0 40px rgba(108,92,231,0.2); }
+        }
         .price-card.featured::before {
             content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%;
             transform: translateX(-50%); background: #6c5ce7; color: #fff;
@@ -356,6 +374,7 @@
         [data-theme="light"] .comment-action-btn { color: #999; }
         [data-theme="light"] .comment-action-btn:hover { color: #555; }
         [data-theme="light"] .particles { display: none; }
+        [data-theme="light"] .hero::after { background: linear-gradient(transparent, rgba(255,255,255,1)); }
 
         /* MOBILE */
         @media (max-width: 768px) {
@@ -462,7 +481,7 @@
         <div class="pricing-grid">
             <div class="price-card fade-in">
                 <h3>Basic</h3>
-                <div class="price" data-ng="35000">₦35,000</div>
+                <div class="price" data-ng="40000">₦40,000</div>
                 <ul class="price-features">
                     <li>Single page website</li>
                     <li>Mobile responsive</li>
@@ -474,7 +493,7 @@
             </div>
             <div class="price-card featured fade-in fade-in-delay-1">
                 <h3>Standard</h3>
-                <div class="price" data-ng="70000">₦70,000</div>
+                <div class="price" data-ng="75000">₦75,000</div>
                 <ul class="price-features">
                     <li>Multi-page website (up to 5)</li>
                     <li>Mobile responsive</li>
@@ -487,7 +506,7 @@
             </div>
             <div class="price-card fade-in fade-in-delay-2">
                 <h3>Premium</h3>
-                <div class="price" data-ng="150000">₦150,000</div>
+                <div class="price" data-ng="200000">₦200,000</div>
                 <ul class="price-features">
                     <li>Full business website</li>
                     <li>E-commerce / online store</li>
@@ -681,28 +700,65 @@
                 }
             }).catch(() => {});
 
-        // ===== 3D TILT =====
-        document.querySelectorAll('.service-card, .price-card').forEach(card => {
+        // ===== 3D TILT (Enhanced) =====
+        document.querySelectorAll('.service-card, .price-card, .work-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left, y = e.clientY - rect.top;
-                card.style.transform = `perspective(800px) rotateX(${(y - rect.height/2)/20}deg) rotateY(${(rect.width/2 - x)/20}deg) translateY(-4px)`;
+                const rotX = (y - rect.height/2) / 12;
+                const rotY = (rect.width/2 - x) / 12;
+                card.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-8px) scale(1.02)`;
+                card.style.boxShadow = `${-rotY*2}px ${rotX*2}px 40px rgba(108,92,231,0.15)`;
             });
             card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
+                card.style.transform = 'perspective(600px) rotateX(0) rotateY(0) translateY(0) scale(1)';
+                card.style.boxShadow = 'none';
+                card.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s';
+            });
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = 'transform 0.1s, box-shadow 0.1s';
             });
         });
 
-        // ===== PARTICLES =====
+        // ===== PARTICLES (Enhanced) =====
         const pc = document.getElementById('particles');
-        for (let i = 0; i < 20; i++) {
+        const colors = ['rgba(108,92,231,0.4)', 'rgba(162,155,254,0.3)', 'rgba(108,92,231,0.2)', 'rgba(255,255,255,0.1)'];
+        for (let i = 0; i < 35; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
             p.style.left = Math.random() * 100 + '%';
-            p.style.animationDuration = (Math.random() * 15 + 10) + 's';
-            p.style.animationDelay = (Math.random() * 10) + 's';
-            p.style.width = p.style.height = (Math.random() * 4 + 2) + 'px';
+            p.style.animationDuration = (Math.random() * 20 + 8) + 's';
+            p.style.animationDelay = (Math.random() * 15) + 's';
+            const size = Math.random() * 5 + 2;
+            p.style.width = p.style.height = size + 'px';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.boxShadow = `0 0 ${size*2}px ${colors[Math.floor(Math.random() * colors.length)]}`;
             pc.appendChild(p);
+        }
+
+        // ===== FLOATING BADGE =====
+        const badge = document.querySelector('.badge');
+        if (badge) {
+            let bAngle = 0;
+            function animateBadge() {
+                bAngle += 0.02;
+                badge.style.transform = `translateY(${Math.sin(bAngle) * 6}px)`;
+                requestAnimationFrame(animateBadge);
+            }
+            animateBadge();
+        }
+
+        // ===== HERO TEXT GLOW PULSE =====
+        const heroEm = document.querySelector('.hero h1 em');
+        if (heroEm) {
+            let gAngle = 0;
+            function glowPulse() {
+                gAngle += 0.015;
+                const glow = 10 + Math.sin(gAngle) * 8;
+                heroEm.style.filter = `drop-shadow(0 0 ${glow}px rgba(108,92,231,0.5))`;
+                requestAnimationFrame(glowPulse);
+            }
+            glowPulse();
         }
 
         // ===== CLOSE DROPDOWNS ON OUTSIDE CLICK =====
