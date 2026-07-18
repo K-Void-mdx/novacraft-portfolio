@@ -7,6 +7,9 @@
         function apply(){ document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark'); }
         apply();
         mq.addEventListener('change', apply);
+        document.addEventListener('visibilitychange', function(){ if(!document.hidden) apply(); });
+        window.addEventListener('pageshow', apply);
+        window.addEventListener('focus', apply);
     })();
     </script>
     <meta charset="UTF-8">
