@@ -3,8 +3,7 @@
 <head>
     <script>
     (function(){
-        var t = localStorage.getItem('theme');
-        if(!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        var t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', t);
     })();
     </script>
@@ -218,7 +217,7 @@
     <script>
     function toggleTheme(){
         var h=document.documentElement,c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';
-        h.setAttribute('data-theme',n);localStorage.setItem('theme',n);
+        h.setAttribute('data-theme',n);
         document.getElementById('themeToggle').textContent=n==='dark'?'🌙':'☀️';
     }
     (function(){var t=document.documentElement.getAttribute('data-theme');document.getElementById('themeToggle').textContent=t==='dark'?'🌙':'☀️';})();

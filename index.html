@@ -3,8 +3,7 @@
 <head>
     <script>
     (function(){
-        var t = localStorage.getItem('theme');
-        if(!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        var t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', t);
     })();
     </script>
@@ -560,7 +559,6 @@
             var current = html.getAttribute('data-theme');
             var next = current === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
             document.getElementById('themeToggle').textContent = next === 'dark' ? '🌙' : '☀️';
         }
         (function() {
