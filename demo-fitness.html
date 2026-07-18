@@ -1,6 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
+    <script>
+    (function(){
+        var t = localStorage.getItem('theme');
+        if(!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IronHouse Fitness — Lagos</title>
@@ -98,6 +105,30 @@
             text-align: center; padding: 40px; color: #525252; font-size: 0.8rem;
             border-top: 1px solid rgba(255,255,255,0.04);
         }
+        /* THEME TOGGLE */
+        .theme-toggle {
+            background: none; border: 1px solid rgba(255,255,255,0.15); border-radius: 50%;
+            width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 1rem; padding: 0; transition: all 0.3s; color: #fff;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.1); }
+
+        /* LIGHT MODE */
+        [data-theme="light"] body { background: #f8f8f8; color: #1a1a1a; }
+        [data-theme="light"] nav { border-bottom: 1px solid rgba(0,0,0,0.08); }
+        [data-theme="light"] .nav-brand { color: #dc2626; }
+        [data-theme="light"] .nav-links a { color: #555; }
+        [data-theme="light"] .nav-links a:hover { color: #dc2626; }
+        [data-theme="light"] .theme-toggle { border-color: rgba(0,0,0,0.15); color: #1a1a1a; }
+        [data-theme="light"] .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+        [data-theme="light"] .section-title { color: #1a1a1a; }
+        [data-theme="light"] .class-overlay h3 { color: #1a1a1a; }
+        [data-theme="light"] .price-card { background: #fff; border-color: rgba(0,0,0,0.08); }
+        [data-theme="light"] .price-card h3 { color: #1a1a1a; }
+        [data-theme="light"] .price-amount { color: #1a1a1a; }
+        [data-theme="light"] .price-features li { color: #555; border-color: rgba(0,0,0,0.06); }
+        [data-theme="light"] footer { color: #999; border-color: rgba(0,0,0,0.06); }
+
         @media (max-width: 768px) {
             nav { padding: 16px 20px; }
             .section { padding: 60px 20px; }
@@ -112,6 +143,7 @@
         <div class="nav-links">
             <a href="#classes">Classes</a>
             <a href="#pricing">Pricing</a>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
             <a href="https://wa.me/2347046855205" class="btn-sm" target="_blank">Join Now</a>
         </div>
     </nav>
@@ -196,5 +228,13 @@
     <footer>
         &copy; 2026 IronHouse Fitness. All rights reserved.
     </footer>
+    <script>
+    function toggleTheme(){
+        var h=document.documentElement,c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';
+        h.setAttribute('data-theme',n);localStorage.setItem('theme',n);
+        document.getElementById('themeToggle').textContent=n==='dark'?'🌙':'☀️';
+    }
+    (function(){var t=document.documentElement.getAttribute('data-theme');document.getElementById('themeToggle').textContent=t==='dark'?'🌙':'☀️';})();
+    </script>
 </body>
 </html>

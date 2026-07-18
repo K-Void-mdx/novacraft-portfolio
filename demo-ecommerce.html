@@ -1,6 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
+    <script>
+    (function(){
+        var t = localStorage.getItem('theme');
+        if(!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VELVET — Fashion Store</title>
@@ -86,6 +93,37 @@
             text-align: center; padding: 40px; color: #bbb; font-size: 0.8rem;
             border-top: 1px solid #eee;
         }
+        /* THEME TOGGLE */
+        .theme-toggle {
+            background: none; border: 1px solid rgba(0,0,0,0.12); border-radius: 50%;
+            width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 1rem; padding: 0; transition: all 0.3s; color: #1a1a1a;
+        }
+        .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+
+        /* DARK MODE */
+        [data-theme="dark"] body { background: #111; color: #e5e5e5; }
+        [data-theme="dark"] nav { background: #1a1a1a; border-color: rgba(255,255,255,0.08); }
+        [data-theme="dark"] .nav-brand { color: #fff; }
+        [data-theme="dark"] .nav-links a { color: #aaa; }
+        [data-theme="dark"] .nav-links a:hover { color: #fff; }
+        [data-theme="dark"] .theme-toggle { border-color: rgba(255,255,255,0.15); color: #fff; }
+        [data-theme="dark"] .theme-toggle:hover { background: rgba(255,255,255,0.1); }
+        [data-theme="dark"] .hero-badge { border-color: rgba(255,255,255,0.15); color: #aaa; }
+        [data-theme="dark"] .hero-text h1 { color: #fff; }
+        [data-theme="dark"] .hero-text p { color: #999; }
+        [data-theme="dark"] .section-header h2 { color: #fff; }
+        [data-theme="dark"] .section-header a { color: #999; }
+        [data-theme="dark"] .product-card { background: #1a1a1a; border-color: rgba(255,255,255,0.08); }
+        [data-theme="dark"] .product-card:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+        [data-theme="dark"] .product-info h3 { color: #fff; }
+        [data-theme="dark"] .product-info .price { color: #fff; }
+        [data-theme="dark"] .product-info .price old { color: #666; }
+        [data-theme="dark"] .feature h4 { color: #fff; }
+        [data-theme="dark"] footer { color: #666; border-color: rgba(255,255,255,0.06); }
+        [data-theme="dark"] .btn-dark { background: #fff; color: #111; }
+        [data-theme="dark"] .btn-dark:hover { background: #ddd; }
+
         @media (max-width: 768px) {
             nav { padding: 16px 20px; }
             .section { padding: 40px 20px; }
@@ -102,6 +140,7 @@
         <div class="nav-links">
             <a href="#shop">Shop</a>
             <a href="#features">About</a>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
             <a href="https://wa.me/2347046855205" target="_blank">Contact</a>
         </div>
     </nav>
@@ -176,5 +215,13 @@
     <footer>
         &copy; 2026 VELVET Fashion. All rights reserved.
     </footer>
+    <script>
+    function toggleTheme(){
+        var h=document.documentElement,c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';
+        h.setAttribute('data-theme',n);localStorage.setItem('theme',n);
+        document.getElementById('themeToggle').textContent=n==='dark'?'🌙':'☀️';
+    }
+    (function(){var t=document.documentElement.getAttribute('data-theme');document.getElementById('themeToggle').textContent=t==='dark'?'🌙':'☀️';})();
+    </script>
 </body>
 </html>

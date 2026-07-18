@@ -1,6 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
+    <script>
+    (function(){
+        var t = localStorage.getItem('theme');
+        if(!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Flame Grill — Lagos</title>
@@ -72,6 +79,33 @@
             text-align: center; padding: 40px; color: #57534e; font-size: 0.8rem;
             border-top: 1px solid rgba(255,255,255,0.04);
         }
+        /* THEME TOGGLE */
+        .theme-toggle {
+            background: none; border: 1px solid rgba(255,255,255,0.15); border-radius: 50%;
+            width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 1rem; padding: 0; transition: all 0.3s; color: #fff;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.1); }
+
+        /* LIGHT MODE */
+        [data-theme="light"] body { background: #fffaf5; color: #1a1a1a; }
+        [data-theme="light"] nav { border-bottom: 1px solid rgba(0,0,0,0.08); }
+        [data-theme="light"] .nav-brand { color: #c2410c; }
+        [data-theme="light"] .nav-links a { color: #666; }
+        [data-theme="light"] .nav-links a:hover { color: #ea580c; }
+        [data-theme="light"] .theme-toggle { border-color: rgba(0,0,0,0.15); color: #1a1a1a; }
+        [data-theme="light"] .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+        [data-theme="light"] .section-title { color: #1a1a1a; }
+        [data-theme="light"] .menu-card { background: #fff; border-color: rgba(0,0,0,0.08); }
+        [data-theme="light"] .menu-card:hover { border-color: rgba(249,115,22,0.3); }
+        [data-theme="light"] .menu-text h3 { color: #1a1a1a; }
+        [data-theme="light"] .menu-text p { color: #666; }
+        [data-theme="light"] .hours-card { background: #fff; border-color: rgba(0,0,0,0.08); }
+        [data-theme="light"] .hours-card h3 { color: #c2410c; }
+        [data-theme="light"] .hours-card p { color: #555; }
+        [data-theme="light"] .btn-outline { border-color: rgba(0,0,0,0.2); color: #1a1a1a; }
+        [data-theme="light"] footer { color: #999; border-color: rgba(0,0,0,0.06); }
+
         @media (max-width: 768px) {
             nav { padding: 16px 20px; }
             .nav-links { gap: 16px; }
@@ -86,6 +120,7 @@
         <div class="nav-links">
             <a href="#menu">Menu</a>
             <a href="#hours">Hours</a>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
             <a href="https://wa.me/2347046855205" target="_blank">Reserve</a>
         </div>
     </nav>
@@ -171,5 +206,13 @@
     <footer>
         &copy; 2026 The Flame Grill. All rights reserved.
     </footer>
+    <script>
+    function toggleTheme(){
+        var h=document.documentElement,c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';
+        h.setAttribute('data-theme',n);localStorage.setItem('theme',n);
+        document.getElementById('themeToggle').textContent=n==='dark'?'🌙':'☀️';
+    }
+    (function(){var t=document.documentElement.getAttribute('data-theme');document.getElementById('themeToggle').textContent=t==='dark'?'🌙':'☀️';})();
+    </script>
 </body>
 </html>
