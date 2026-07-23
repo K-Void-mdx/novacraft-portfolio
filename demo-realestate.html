@@ -266,6 +266,7 @@
         .fade-in.visible { opacity: 1; transform: translateY(0); }
 
         /* THEME TOGGLE */
+        .nav-right { display: flex; align-items: center; gap: 16px; }
         .theme-toggle {
             background: none; border: 1px solid rgba(0,0,0,0.12); border-radius: 50%;
             width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center;
@@ -295,6 +296,7 @@
             .hero-img { width: 100%; }
             .hero-float { position: relative; bottom: auto; left: auto; margin-top: 16px; }
             .nav-links { display: none; }
+            .nav-right { gap: 10px; }
             .hamburger { display: block; }
             .search-bar { flex-direction: column; }
             .search-bar input, .search-bar select { width: 100%; }
@@ -303,8 +305,6 @@
     </style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme" style="position:fixed;top:20px;right:80px;z-index:101;width:40px;height:40px;border-radius:50%;border:1px solid rgba(128,128,128,0.2);background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;">☀️</button>
-
     <nav>
         <div class="logo">PRESTIGE <span>PROPERTIES</span></div>
         <ul class="nav-links">
@@ -313,7 +313,10 @@
             <li><a href="#testimonials">Reviews</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
-        <a href="https://wa.me/2347046855205" class="nav-cta" target="_blank">List Property</a>
+        <div class="nav-right">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
+            <a href="https://wa.me/2347046855205" class="nav-cta" target="_blank">List Property</a>
+        </div>
         <div class="hamburger"><span></span><span></span><span></span></div>
     </nav>
 
