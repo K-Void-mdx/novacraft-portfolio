@@ -110,6 +110,8 @@
         [data-theme="light"] .btn-outline { border-color: rgba(0,0,0,0.2); color: #1a1a1a; }
         [data-theme="light"] footer { color: #999; border-color: rgba(0,0,0,0.06); }
 
+        .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #e67e22, #f39c12); z-index: 200; transition: width 0.1s; width: 0%; }
+
         @media (max-width: 768px) {
             nav { padding: 16px 20px; }
             .nav-links { gap: 16px; }
@@ -118,6 +120,7 @@
     </style>
 </head>
 <body>
+    <div class="scroll-progress" id="scrollProgress"></div>
     <div class="demo-banner">This is a demo site built by <a href="https://novacraft-portfolio.vercel.app" target="_blank">NovaCraft</a> — Want one like this? <a href="https://wa.me/2347046855205" target="_blank">Chat on WhatsApp</a></div>
     <nav>
         <div class="nav-brand">The Flame Grill</div>
@@ -217,6 +220,11 @@
         document.getElementById('themeToggle').textContent=n==='dark'?'🌙':'☀️';
     }
     (function(){var t=document.documentElement.getAttribute('data-theme');document.getElementById('themeToggle').textContent=t==='dark'?'🌙':'☀️';})();
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.querySelector('.scroll-progress').style.width = pct + '%';
+    });
     </script>
 </body>
 </html>

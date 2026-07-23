@@ -61,16 +61,30 @@
 
         /* HERO */
         .hero {
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
+            min-height: 100vh; display: flex; align-items: center;
+            padding: 120px 5% 80px; gap: 60px;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
         }
-        .hero::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: url('https://images.unsplash.com/photo-1585747860019-024f58b4e664?w=1400&q=80') center/cover;
-            opacity: 0.15;
+        .hero-text { flex: 1; }
+        .hero-img { flex: 1; position: relative; }
+        .hero-img img {
+            width: 100%; border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         }
-        .hero-content { text-align: center; position: relative; z-index: 2; padding: 0 20px; }
+        .hero-float {
+            position: absolute; bottom: -20px; left: -20px; background: var(--card);
+            padding: 20px 24px; border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border: 1px solid var(--card-border);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .hero-float .icon {
+            width: 44px; height: 44px; background: rgba(201,168,76,0.1);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.2rem;
+        }
+        .hero-float .text strong { display: block; font-size: 0.9rem; }
+        .hero-float .text span { font-size: 0.8rem; color: var(--text-dim); }
         .hero-badge {
             display: inline-block; padding: 8px 24px; border: 1px solid rgba(201,168,76,0.3);
             border-radius: 30px; font-size: 0.75rem; letter-spacing: 3px;
@@ -86,11 +100,11 @@
         .hero h1 .gold { color: var(--gold); }
         .hero p {
             font-size: 1.1rem; color: var(--text-dim); max-width: 500px;
-            margin: 0 auto 40px; line-height: 1.8;
+            margin: 0 0 32px; line-height: 1.8;
             animation: fadeInUp 0.8s ease 0.4s both;
         }
         .hero-btns {
-            display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+            display: flex; gap: 16px; justify-content: flex-start; flex-wrap: wrap;
             animation: fadeInUp 0.8s ease 0.6s both;
         }
         .btn-primary {
@@ -292,8 +306,14 @@
         .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+        /* SCROLL PROGRESS */
+        .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #c9a84c, #e4c76b); z-index: 200; transition: width 0.1s; width: 0%; }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
+            .hero { flex-direction: column; padding: 120px 5% 60px; gap: 40px; }
+            .hero-img { width: 100%; }
+            .hero-float { position: relative; bottom: auto; left: auto; margin-top: 16px; }
             .nav-links { display: none; }
             .hamburger { display: block; }
             .booking-grid { grid-template-columns: 1fr; }
@@ -304,6 +324,7 @@
     </style>
 </head>
 <body>
+    <div class="scroll-progress" id="scrollProgress"></div>
 
     <nav>
         <div class="logo">BLADE <span>&</span> STYLE</div>
@@ -322,13 +343,23 @@
 
     <!-- HERO -->
     <section class="hero">
-        <div class="hero-content">
+        <div class="hero-text">
             <div class="hero-badge">Est. 2024 — Premium Grooming</div>
             <h1>Where <span class="gold">Style</span><br>Meets Precision</h1>
             <p>Experience the art of grooming at its finest. Expert barbers, premium products, and an atmosphere designed for the modern gentleman.</p>
             <div class="hero-btns">
                 <a href="#booking" class="btn-primary">Book Appointment</a>
                 <a href="#services" class="btn-outline">View Services</a>
+            </div>
+        </div>
+        <div class="hero-img">
+            <img src="https://images.unsplash.com/photo-1585747860019-024f58b4e664?w=800&q=80" alt="Premium Barbershop">
+            <div class="hero-float">
+                <div class="icon">⭐</div>
+                <div class="text">
+                    <strong>5-Star Rated Barbershop</strong>
+                    <span>Trusted by 500+ Clients</span>
+                </div>
             </div>
         </div>
     </section>
@@ -584,6 +615,13 @@
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
             nav.style.background = window.scrollY > 50 ? 'rgba(10,10,10,0.95)' : 'rgba(10,10,10,0.85)';
+        });
+
+        // SCROLL PROGRESS
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+            document.querySelector('.scroll-progress').style.width = pct + '%';
         });
     </script>
 

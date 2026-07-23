@@ -239,6 +239,28 @@
         document.getElementById('themeToggle').textContent=n==='dark'?'🌙':'☀️';
     }
     (function(){var t=document.documentElement.getAttribute('data-theme');document.getElementById('themeToggle').textContent=t==='dark'?'🌙':'☀️';})();
+    function animateCounters() {
+        document.querySelectorAll('.price-amount').forEach(el => {
+            const text = el.textContent;
+            const match = text.match(/(\d+)/);
+            if (!match) return;
+            const target = parseInt(match[1]);
+            const prefix = text.substring(0, text.indexOf(match[1]));
+            const suffix = text.substring(text.indexOf(match[1]) + match[1].length);
+            let current = 0;
+            const step = Math.ceil(target / 60);
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) { current = target; clearInterval(timer); }
+                el.innerHTML = prefix + current + suffix;
+            }, 30);
+        });
+    }
+    const priceObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { animateCounters(); priceObs.disconnect(); } });
+    }, { threshold: 0.3 });
+    const pricingGrid = document.querySelector('.pricing-grid');
+    if (pricingGrid) priceObs.observe(pricingGrid);
     </script>
 </body>
 </html>
