@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blade & Style Barbershop | Premium Grooming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --card: #111111;
+            --card-border: rgba(255,255,255,0.06);
+            --gold: #c9a84c;
+            --gold-light: #e4c76b;
+            --text: #ffffff;
+            --text-dim: #888888;
+            --text-mid: #aaaaaa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%;
+            background: rgba(10,10,10,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(201,168,76,0.1);
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem; font-weight: 900; color: var(--gold);
+            letter-spacing: 2px;
+        }
+        .logo span { color: #fff; font-weight: 400; }
+        .nav-links { display: flex; gap: 32px; list-style: none; }
+        .nav-links a {
+            color: var(--text-mid); text-decoration: none; font-size: 0.85rem;
+            font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-cta {
+            background: var(--gold); color: #000; padding: 10px 24px;
+            border-radius: 4px; text-decoration: none; font-size: 0.8rem;
+            font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        .nav-cta:hover { background: var(--gold-light); transform: translateY(-2px); }
+        .hamburger { display: none; cursor: pointer; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); margin: 5px 0; transition: 0.3s; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://images.unsplash.com/photo-1585747860019-024f58b4e664?w=1400&q=80') center/cover;
+            opacity: 0.15;
+        }
+        .hero-content { text-align: center; position: relative; z-index: 2; padding: 0 20px; }
+        .hero-badge {
+            display: inline-block; padding: 8px 24px; border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 30px; font-size: 0.75rem; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--gold); margin-bottom: 32px;
+            animation: fadeInUp 0.8s ease;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem); font-weight: 900;
+            line-height: 1.1; margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        .hero h1 .gold { color: var(--gold); }
+        .hero p {
+            font-size: 1.1rem; color: var(--text-dim); max-width: 500px;
+            margin: 0 auto 40px; line-height: 1.8;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        .hero-btns {
+            display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+        .btn-primary {
+            background: var(--gold); color: #000; padding: 14px 36px;
+            border: none; border-radius: 4px; font-size: 0.85rem;
+            font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.3s; text-decoration: none;
+        }
+        .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+        .btn-outline {
+            background: transparent; color: var(--gold); padding: 14px 36px;
+            border: 1px solid rgba(201,168,76,0.4); border-radius: 4px;
+            font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;
+            text-transform: uppercase; cursor: pointer; transition: all 0.3s;
+            text-decoration: none;
+        }
+        .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+
+        /* SECTIONS */
+        section { padding: 100px 5%; }
+        .section-label {
+            font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 12px; font-weight: 600;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 16px;
+        }
+        .section-desc { color: var(--text-dim); max-width: 500px; line-height: 1.8; }
+
+        /* SERVICES */
+        .services-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px; margin-top: 48px;
+        }
+        .service-card {
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 36px; transition: all 0.4s;
+            position: relative; overflow: hidden;
+        }
+        .service-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+            opacity: 0; transition: opacity 0.4s;
+        }
+        .service-card:hover { transform: translateY(-6px); border-color: rgba(201,168,76,0.2); }
+        .service-card:hover::before { opacity: 1; }
+        .service-icon {
+            width: 48px; height: 48px; border-radius: 10px;
+            background: rgba(201,168,76,0.08); display: flex; align-items: center;
+            justify-content: center; font-size: 1.4rem; margin-bottom: 20px;
+        }
+        .service-card h3 { font-size: 1.1rem; margin-bottom: 8px; font-weight: 600; }
+        .service-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.7; margin-bottom: 16px; }
+        .service-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem; color: var(--gold); font-weight: 700;
+        }
+        .service-price span { font-size: 0.8rem; color: var(--text-dim); font-family: 'Inter', sans-serif; font-weight: 400; }
+
+        /* GALLERY */
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px;
+        }
+        .gallery-item {
+            border-radius: 12px; overflow: hidden; aspect-ratio: 1;
+            position: relative; cursor: pointer;
+        }
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s;
+        }
+        .gallery-item:hover img { transform: scale(1.08); }
+        .gallery-item::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.6));
+        }
+
+        /* TEAM */
+        .team-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px; margin-top: 48px;
+        }
+        .team-card { text-align: center; }
+        .team-img {
+            width: 160px; height: 160px; border-radius: 50%; object-fit: cover;
+            border: 3px solid rgba(201,168,76,0.2); margin-bottom: 20px;
+        }
+        .team-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+        .team-card .role { color: var(--gold); font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* TESTIMONIALS */
+        .testimonials-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px; margin-top: 48px;
+        }
+        .testimonial-card {
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 32px;
+        }
+        .stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 16px; letter-spacing: 2px; }
+        .testimonial-card p { color: var(--text-mid); font-size: 0.95rem; line-height: 1.8; margin-bottom: 20px; font-style: italic; }
+        .testimonial-author { display: flex; align-items: center; gap: 12px; }
+        .testimonial-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(201,168,76,0.15); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--gold); font-size: 0.9rem; }
+        .testimonial-name { font-size: 0.9rem; font-weight: 600; }
+        .testimonial-role { font-size: 0.75rem; color: var(--text-dim); }
+
+        /* BOOKING */
+        .booking-section {
+            background: linear-gradient(135deg, rgba(201,168,76,0.05), rgba(201,168,76,0.02));
+            border-top: 1px solid rgba(201,168,76,0.1);
+            border-bottom: 1px solid rgba(201,168,76,0.1);
+        }
+        .booking-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 48px;
+        }
+        .booking-info h3 {
+            font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 16px;
+        }
+        .booking-info p { color: var(--text-dim); line-height: 1.8; margin-bottom: 24px; }
+        .booking-detail { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+        .booking-detail .icon { color: var(--gold); font-size: 1.1rem; margin-top: 2px; }
+        .booking-detail .text { color: var(--text-mid); font-size: 0.9rem; }
+        .booking-detail .text strong { color: #fff; }
+        .booking-form {
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 36px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+            color: #fff; font-family: 'Inter', sans-serif; font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: rgba(201,168,76,0.4);
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group select { appearance: none; cursor: pointer; }
+        .form-group select option { background: #111; }
+
+        /* CONTACT */
+        .contact-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px; margin-top: 48px;
+        }
+        .contact-item { text-align: center; }
+        .contact-icon {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: rgba(201,168,76,0.08); display: flex; align-items: center;
+            justify-content: center; font-size: 1.3rem; margin: 0 auto 16px;
+        }
+        .contact-item h4 { font-size: 0.9rem; margin-bottom: 4px; }
+        .contact-item p { color: var(--text-dim); font-size: 0.85rem; }
+        .contact-item a { color: var(--gold); text-decoration: none; }
+
+        /* MAP */
+        .map-container {
+            margin-top: 48px; border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--card-border); height: 300px;
+        }
+        .map-container iframe { width: 100%; height: 100%; border: 0; filter: grayscale(0.5); }
+
+        /* FOOTER */
+        footer {
+            text-align: center; padding: 40px 5%;
+            border-top: 1px solid var(--card-border); color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        /* BUILT BY NOVACRAFT */
+        .novacraft-banner {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 99;
+            background: linear-gradient(135deg, rgba(108,92,231,0.95), rgba(108,92,231,0.85));
+            backdrop-filter: blur(10px);
+            padding: 12px 5%; display: flex; justify-content: space-between;
+            align-items: center; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .novacraft-banner p { color: rgba(255,255,255,0.9); font-size: 0.8rem; font-weight: 500; }
+        .novacraft-banner a {
+            color: #fff; font-weight: 700; text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.3); transition: border-color 0.3s;
+        }
+        .novacraft-banner a:hover { border-color: #fff; }
+        .novacraft-btn {
+            background: #fff; color: #6c5ce7; padding: 8px 20px; border-radius: 6px;
+            text-decoration: none; font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.5px; transition: all 0.3s;
+        }
+        .novacraft-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: block; }
+            .booking-grid { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            section { padding: 60px 5%; }
+            .novacraft-banner { flex-direction: column; gap: 8px; text-align: center; padding: 16px 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">BLADE <span>&</span> STYLE</div>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="#booking" class="nav-cta">Book Now</a>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Est. 2024 — Premium Grooming</div>
+            <h1>Where <span class="gold">Style</span><br>Meets Precision</h1>
+            <p>Experience the art of grooming at its finest. Expert barbers, premium products, and an atmosphere designed for the modern gentleman.</p>
+            <div class="hero-btns">
+                <a href="#booking" class="btn-primary">Book Appointment</a>
+                <a href="#services" class="btn-outline">View Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+        <div class="section-label">What We Offer</div>
+        <div class="section-title">Our Services</div>
+        <div class="section-desc">From classic cuts to modern styles, we deliver excellence with every visit.</div>
+        <div class="services-grid">
+            <div class="service-card fade-in">
+                <div class="service-icon">✂️</div>
+                <h3>Classic Haircut</h3>
+                <p>Precision cut tailored to your face shape and style preference. Includes consultation, wash, and styling.</p>
+                <div class="service-price">₦2,000 <span>/ session</span></div>
+            </div>
+            <div class="service-card fade-in">
+                <div class="service-icon">🪒</div>
+                <h3>Hot Towel Shave</h3>
+                <p>Traditional straight razor shave with hot towel treatment and premium aftershave balm.</p>
+                <div class="service-price">₦1,500 <span>/ session</span></div>
+            </div>
+            <div class="service-card fade-in">
+                <div class="service-icon">💈</div>
+                <h3>Fade & Design</h3>
+                <p>Custom fade cuts with intricate line-up and design work. Skin fade, mid fade, or taper fade.</p>
+                <div class="service-price">₦2,500 <span>/ session</span></div>
+            </div>
+            <div class="service-card fade-in">
+                <div class="service-icon">🧴</div>
+                <h3>Beard Grooming</h3>
+                <p>Complete beard sculpting with trim, shaping, oil treatment, and styling.</p>
+                <div class="service-price">₦1,500 <span>/ session</span></div>
+            </div>
+            <div class="service-card fade-in">
+                <div class="service-icon">💆</div>
+                <h3>Hair Treatment</h3>
+                <p>Deep conditioning, scalp massage, and hot oil treatment for healthy, shiny hair.</p>
+                <div class="service-price">₦3,000 <span>/ session</span></div>
+            </div>
+            <div class="service-card fade-in">
+                <div class="service-icon">👑</div>
+                <h3>VIP Package</h3>
+                <p>Complete grooming experience: haircut, shave, beard, treatment, and complimentary drinks.</p>
+                <div class="service-price">₦5,000 <span>/ session</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery">
+        <div class="section-label">Our Work</div>
+        <div class="section-title">Style Gallery</div>
+        <div class="section-desc">See the quality of our work and the styles we create.</div>
+        <div class="gallery-grid">
+            <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=500&q=80" alt="Barber work"></div>
+            <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=500&q=80" alt="Fresh fade"></div>
+            <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=500&q=80" alt="Barbershop"></div>
+            <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=500&q=80" alt="Beard trim"></div>
+            <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1593702288056-7927b442d1fa?w=500&q=80" alt="Classic cut"></div>
+            <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=500&q=80" alt="Barber tools"></div>
+        </div>
+    </section>
+
+    <!-- TEAM -->
+    <section id="team">
+        <div class="section-label">Meet The Team</div>
+        <div class="section-title">Our Barbers</div>
+        <div class="section-desc">Skilled professionals with years of experience in the art of grooming.</div>
+        <div class="team-grid">
+            <div class="team-card fade-in">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80" alt="Barber" class="team-img">
+                <h3>Chidi Okonkwo</h3>
+                <div class="role">Master Barber</div>
+            </div>
+            <div class="team-card fade-in">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80" alt="Barber" class="team-img">
+                <h3>Emeka Johnson</h3>
+                <div class="role">Senior Stylist</div>
+            </div>
+            <div class="team-card fade-in">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80" alt="Barber" class="team-img">
+                <h3>Ibrahim Musa</h3>
+                <div class="role">Fade Specialist</div>
+            </div>
+            <div class="team-card fade-in">
+                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&q=80" alt="Barber" class="team-img">
+                <h3>Tunde Williams</h3>
+                <div class="role">Beard Expert</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials">
+        <div class="section-label">What Clients Say</div>
+        <div class="section-title">Testimonials</div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card fade-in">
+                <div class="stars">★★★★★</div>
+                <p>"Best barbershop in the city! The attention to detail is incredible. I always leave looking and feeling great."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">A</div>
+                    <div>
+                        <div class="testimonial-name">Ahmed Bello</div>
+                        <div class="testimonial-role">Regular Client</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in">
+                <div class="stars">★★★★★</div>
+                <p>"The VIP package is worth every naira. Professional service, great atmosphere, and the hot towel shave is amazing."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">K</div>
+                    <div>
+                        <div class="testimonial-name">Kenneth Obi</div>
+                        <div class="testimonial-role">VIP Member</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in">
+                <div class="stars">★★★★★</div>
+                <p>"I've been coming here for 6 months and I've never been disappointed. The barbers really know their craft."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">O</div>
+                    <div>
+                        <div class="testimonial-name">Oluwaseun Ade</div>
+                        <div class="testimonial-role">Loyal Client</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING -->
+    <section id="booking" class="booking-section">
+        <div class="section-label">Book Your Seat</div>
+        <div class="section-title">Make an Appointment</div>
+        <div class="booking-grid">
+            <div class="booking-info fade-in">
+                <h3>Visit Us Today</h3>
+                <p>Walk-ins are welcome, but booking ahead guarantees your spot. No waiting, no stress.</p>
+                <div class="booking-detail">
+                    <div class="icon">📍</div>
+                    <div class="text"><strong>Location:</strong><br>12 Wuse Market Road, Wuse 2, Abuja</div>
+                </div>
+                <div class="booking-detail">
+                    <div class="icon">🕐</div>
+                    <div class="text"><strong>Hours:</strong><br>Mon–Sat: 9:00 AM – 9:00 PM<br>Sunday: 12:00 PM – 6:00 PM</div>
+                </div>
+                <div class="booking-detail">
+                    <div class="icon">📞</div>
+                    <div class="text"><strong>Phone:</strong><br><a href="tel:+2348101036018">0810 103 6018</a></div>
+                </div>
+                <div class="booking-detail">
+                    <div class="icon">💬</div>
+                    <div class="text"><strong>WhatsApp:</strong><br><a href="https://wa.me/2348101036018">Chat with us</a></div>
+                </div>
+            </div>
+            <div class="booking-form fade-in">
+                <form>
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" placeholder="Enter your phone number">
+                    </div>
+                    <div class="form-group">
+                        <label>Service</label>
+                        <select>
+                            <option>Classic Haircut — ₦2,000</option>
+                            <option>Hot Towel Shave — ₦1,500</option>
+                            <option>Fade & Design — ₦2,500</option>
+                            <option>Beard Grooming — ₦1,500</option>
+                            <option>Hair Treatment — ₦3,000</option>
+                            <option>VIP Package — ₦5,000</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Date</label>
+                        <input type="date">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes (Optional)</label>
+                        <textarea placeholder="Any specific style or request?"></textarea>
+                    </div>
+                    <a href="https://wa.me/2348101036018?text=Hi%2C%20I'd%20like%20to%20book%20an%20appointment" class="btn-primary" style="display:block;text-align:center;width:100%;">Book via WhatsApp</a>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="section-label">Get In Touch</div>
+        <div class="section-title">Contact Us</div>
+        <div class="contact-grid">
+            <div class="contact-item fade-in">
+                <div class="contact-icon">📍</div>
+                <h4>Address</h4>
+                <p>12 Wuse Market Road<br>Wuse 2, Abuja</p>
+            </div>
+            <div class="contact-item fade-in">
+                <div class="contact-icon">📞</div>
+                <h4>Phone</h4>
+                <p><a href="tel:+2348101036018">0810 103 6018</a></p>
+            </div>
+            <div class="contact-item fade-in">
+                <div class="contact-icon">💬</div>
+                <h4>WhatsApp</h4>
+                <p><a href="https://wa.me/2348101036018">Chat with us</a></p>
+            </div>
+            <div class="contact-item fade-in">
+                <div class="contact-icon">📸</div>
+                <h4>Instagram</h4>
+                <p><a href="#">@bladestyleabuja</a></p>
+            </div>
+        </div>
+        <div class="map-container fade-in">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.5!2d7.48!3d9.06!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwMDMnMzYuMCJOIDfCsDI4JzQ4LjAiRQ!5e0!3m2!1sen!2sng!4v1" allowfullscreen loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Blade & Style Barbershop. All rights reserved.</p>
+    </footer>
+
+    <!-- BUILT BY NOVACRAFT -->
+    <div class="novacraft-banner">
+        <p>💼 Built by <a href="https://novacraft-portfolio.vercel.app/" target="_blank">NovaCraft</a> — Need a website like this?</p>
+        <a href="https://wa.me/2347046855205?text=Hi%2C%20I%20saw%20the%20Barbershop%20demo%20and%20I%20want%20one%20like%20it" class="novacraft-btn" target="_blank">Get Yours →</a>
+    </div>
+
+    <script>
+        // SCROLL ANIMATIONS
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // SMOOTH SCROLL
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // NAV SCROLL EFFECT
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            nav.style.background = window.scrollY > 50 ? 'rgba(10,10,10,0.95)' : 'rgba(10,10,10,0.85)';
+        });
+    </script>
+
+</body>
+</html>

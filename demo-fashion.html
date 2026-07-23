@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAISON — Premium Fashion Boutique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        :root{
+            --bg:#faf9f7;--card:#fff;--dark:#1a1a1a;--accent:#8b7355;
+            --accent-light:#a08c6e;--text:#1a1a1a;--dim:#888;--border:#e8e6e1;
+        }
+        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+
+        nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:18px 5%;background:rgba(250,249,247,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+        .logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:6px;text-transform:uppercase;}
+        .nav-links{display:flex;gap:36px;list-style:none;}
+        .nav-links a{color:var(--text);text-decoration:none;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;font-weight:400;transition:color 0.3s;}
+        .nav-links a:hover{color:var(--accent);}
+        .nav-icons{display:flex;gap:16px;align-items:center;}
+        .nav-icons a{color:var(--text);text-decoration:none;font-size:1.1rem;}
+        .hamburger{display:none;cursor:pointer;}
+        .hamburger span{display:block;width:22px;height:1.5px;background:var(--text);margin:5px 0;}
+
+        .hero{min-height:100vh;display:flex;align-items:center;padding:100px 5% 60px;background:linear-gradient(135deg,#f5f0eb,#faf9f7);position:relative;overflow:hidden;}
+        .hero::after{content:'';position:absolute;right:-100px;top:50%;transform:translateY(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(139,115,85,0.06),transparent 70%);border-radius:50%;}
+        .hero-content{max-width:600px;position:relative;z-index:2;}
+        .hero-tag{font-size:0.7rem;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;font-weight:500;}
+        .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,7vw,5rem);font-weight:300;line-height:1.1;margin-bottom:24px;}
+        .hero h1 em{font-style:italic;color:var(--accent);}
+        .hero p{color:var(--dim);font-size:1rem;max-width:420px;line-height:1.9;margin-bottom:36px;}
+        .hero-btns{display:flex;gap:16px;flex-wrap:wrap;}
+        .btn-dark{background:var(--dark);color:#fff;padding:14px 36px;border:none;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-family:'Outfit',sans-serif;font-weight:500;text-decoration:none;}
+        .btn-dark:hover{background:#333;transform:translateY(-2px);}
+        .btn-ghost{background:transparent;color:var(--dark);padding:14px 36px;border:1px solid var(--border);font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-family:'Outfit',sans-serif;font-weight:500;text-decoration:none;}
+        .btn-ghost:hover{border-color:var(--dark);}
+        .hero-img{position:absolute;right:5%;top:50%;transform:translateY(-50%);width:45%;max-width:500px;}
+        .hero-img img{width:100%;border-radius:2px;box-shadow:0 30px 80px rgba(0,0,0,0.08);}
+
+        section{padding:80px 5%;}
+        .section-header{text-align:center;margin-bottom:48px;}
+        .section-tag{font-size:0.65rem;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+        .section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:400;}
+
+        .categories{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;}
+        .cat-btn{padding:8px 24px;border:1px solid var(--border);border-radius:30px;background:transparent;font-family:'Outfit',sans-serif;font-size:0.8rem;letter-spacing:1px;cursor:pointer;transition:all 0.3s;color:var(--text);}
+        .cat-btn:hover,.cat-btn.active{background:var(--dark);color:#fff;border-color:var(--dark);}
+
+        .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;}
+        .product-card{background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:all 0.4s;}
+        .product-card:hover{transform:translateY(-4px);box-shadow:0 15px 40px rgba(0,0,0,0.06);}
+        .product-img{position:relative;height:320px;overflow:hidden;}
+        .product-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s;}
+        .product-card:hover .product-img img{transform:scale(1.04);}
+        .product-badge{position:absolute;top:12px;left:12px;padding:4px 10px;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;font-weight:600;background:var(--dark);color:#fff;}
+        .product-quick{position:absolute;bottom:0;left:0;right:0;padding:12px;background:rgba(255,255,255,0.95);text-align:center;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transform:translateY(100%);transition:transform 0.3s;font-weight:500;}
+        .product-card:hover .product-quick{transform:translateY(0);}
+        .product-info{padding:16px;}
+        .product-brand{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+        .product-name{font-size:0.95rem;font-weight:500;margin-bottom:8px;}
+        .product-price{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--accent);}
+        .product-price .old{text-decoration:line-through;color:var(--dim);font-size:0.9rem;margin-left:8px;}
+
+        .featured-section{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+        .featured-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-top:48px;}
+        .featured-img{border-radius:4px;overflow:hidden;}
+        .featured-img img{width:100%;display:block;}
+        .featured-text h3{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;margin-bottom:16px;}
+        .featured-text p{color:var(--dim);line-height:1.9;margin-bottom:24px;}
+        .featured-price{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--accent);margin-bottom:24px;}
+
+        .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:48px;}
+        .testi-card{background:var(--card);border:1px solid var(--border);padding:32px;border-radius:4px;}
+        .testi-stars{color:var(--accent);font-size:0.8rem;letter-spacing:2px;margin-bottom:16px;}
+        .testi-card p{color:var(--dim);font-size:0.9rem;line-height:1.8;margin-bottom:16px;font-style:italic;}
+        .testi-name{font-size:0.85rem;font-weight:600;}
+        .testi-from{font-size:0.75rem;color:var(--dim);}
+
+        .ig-section{text-align:center;}
+        .ig-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:48px;}
+        .ig-item{aspect-ratio:1;overflow:hidden;cursor:pointer;}
+        .ig-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;filter:brightness(0.9);}
+        .ig-item:hover img{transform:scale(1.06);filter:brightness(1);}
+
+        .newsletter{text-align:center;background:#fff;border-top:1px solid var(--border);padding:60px 5%;}
+        .newsletter h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:8px;}
+        .newsletter p{color:var(--dim);margin-bottom:24px;font-size:0.9rem;}
+        .newsletter-form{display:flex;gap:0;max-width:400px;margin:0 auto;}
+        .newsletter-form input{flex:1;padding:12px 16px;border:1px solid var(--border);border-right:none;font-family:'Outfit',sans-serif;font-size:0.85rem;}
+        .newsletter-form input:focus{outline:none;border-color:var(--accent);}
+        .newsletter-form button{background:var(--dark);color:#fff;padding:12px 24px;border:none;font-family:'Outfit',sans-serif;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+
+        footer{text-align:center;padding:40px 5%;border-top:1px solid var(--border);color:var(--dim);font-size:0.75rem;letter-spacing:1px;}
+
+        .novacraft-banner{position:fixed;bottom:0;left:0;right:0;z-index:99;background:linear-gradient(135deg,rgba(108,92,231,0.95),rgba(108,92,231,0.85));backdrop-filter:blur(10px);padding:12px 5%;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.1);}
+        .novacraft-banner p{color:rgba(255,255,255,0.9);font-size:0.8rem;font-weight:500;}
+        .novacraft-banner a{color:#fff;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.3);}
+        .novacraft-banner a:hover{border-color:#fff;}
+        .novacraft-btn{background:#fff;color:#6c5ce7;padding:8px 20px;border-radius:6px;text-decoration:none;font-size:0.75rem;font-weight:700;transition:all 0.3s;}
+        .novacraft-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(255,255,255,0.2);}
+
+        .fade-in{opacity:0;transform:translateY(24px);transition:all 0.7s cubic-bezier(0.16,1,0.3,1);}
+        .fade-in.visible{opacity:1;transform:translateY(0);}
+
+        @media(max-width:768px){
+            .hero{flex-direction:column;padding:120px 5% 60px;text-align:center;}
+            .hero-img{position:relative;right:auto;top:auto;transform:none;width:100%;margin-top:40px;}
+            .hero p{margin-left:auto;margin-right:auto;}
+            .hero-btns{justify-content:center;}
+            .nav-links{display:none;}
+            .hamburger{display:block;}
+            .featured-grid{grid-template-columns:1fr;}
+            .ig-grid{grid-template-columns:repeat(2,1fr);}
+            .novacraft-banner{flex-direction:column;gap:8px;text-align:center;padding:16px 5%;}
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Maison</div>
+        <ul class="nav-links">
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="#featured">Featured</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="nav-icons">
+            <a href="#">🔍</a>
+            <a href="#">♡</a>
+            <a href="#">🛒</a>
+        </div>
+        <div class="hamburger"><span></span><span></span><span></span></div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-tag">New Collection — Summer 2024</div>
+            <h1>Elevate Your <em>Style</em></h1>
+            <p>Curated fashion for the modern woman. Discover timeless pieces crafted with premium fabrics and contemporary design.</p>
+            <div class="hero-btns">
+                <a href="#shop" class="btn-dark">Shop Now</a>
+                <a href="#featured" class="btn-ghost">View Collection</a>
+            </div>
+        </div>
+        <div class="hero-img">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&q=80" alt="Fashion">
+        </div>
+    </section>
+
+    <!-- SHOP -->
+    <section id="shop">
+        <div class="section-header">
+            <div class="section-tag">Our Collection</div>
+            <div class="section-title">Shop by Category</div>
+        </div>
+        <div class="categories">
+            <button class="cat-btn active">All</button>
+            <button class="cat-btn">Dresses</button>
+            <button class="cat-btn">Tops</button>
+            <button class="cat-btn">Bottoms</button>
+            <button class="cat-btn">Accessories</button>
+        </div>
+        <div class="products-grid">
+            <div class="product-card fade-in">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&q=80" alt="Dress">
+                    <div class="product-badge">New</div>
+                    <div class="product-quick">Quick View</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Maison</div>
+                    <div class="product-name">Silk Wrap Dress</div>
+                    <div class="product-price">₦28,500</div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=500&q=80" alt="Top">
+                    <div class="product-quick">Quick View</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Maison</div>
+                    <div class="product-name">Linen Crop Blouse</div>
+                    <div class="product-price">₦15,000</div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1551803091-e20673f15770?w=500&q=80" alt="Pants">
+                    <div class="product-badge">Sale</div>
+                    <div class="product-quick">Quick View</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Maison</div>
+                    <div class="product-name">High-Waist Trousers</div>
+                    <div class="product-price">₦18,000 <span class="old">₦22,000</span></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=500&q=80" alt="Bag">
+                    <div class="product-quick">Quick View</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Maison</div>
+                    <div class="product-name">Leather Tote Bag</div>
+                    <div class="product-price">₦35,000</div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500&q=80" alt="Dress">
+                    <div class="product-quick">Quick View</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Maison</div>
+                    <div class="product-name">Floral Maxi Dress</div>
+                    <div class="product-price">₦24,000</div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1585487000160-6ebcfceb0d44?w=500&q=80" alt="Jewelry">
+                    <div class="product-badge">Popular</div>
+                    <div class="product-quick">Quick View</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Maison</div>
+                    <div class="product-name">Gold Chain Set</div>
+                    <div class="product-price">₦12,500</div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=500&q=80" alt="Outfit">
+                    <div class="product-quick">Quick View</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Maison</div>
+                    <div class="product-name">Co-ord Set — Ivory</div>
+                    <div class="product-price">₦32,000</div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80" alt="Shoes">
+                    <div class="product-quick">Quick View</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Maison</div>
+                    <div class="product-name">Strappy Heels — Nude</div>
+                    <div class="product-price">₦22,000</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED -->
+    <section id="featured" class="featured-section">
+        <div class="section-header">
+            <div class="section-tag">Editor's Pick</div>
+            <div class="section-title">Featured This Week</div>
+        </div>
+        <div class="featured-grid">
+            <div class="featured-img fade-in">
+                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=700&q=80" alt="Featured">
+            </div>
+            <div class="featured-text fade-in">
+                <div class="section-tag">Limited Edition</div>
+                <h3>The Signature Collection</h3>
+                <p>Handcrafted with the finest Italian silk, the Signature Dress is designed for the woman who commands attention. A timeless piece that transcends seasons.</p>
+                <div class="featured-price">₦45,000</div>
+                <a href="https://wa.me/2347046855205?text=Hi%2C%20I'm%20interested%20in%20the%20Signature%20Collection%20dress" class="btn-dark" target="_blank">Order on WhatsApp</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section id="reviews">
+        <div class="section-header">
+            <div class="section-tag">Testimonials</div>
+            <div class="section-title">What Our Clients Say</div>
+        </div>
+        <div class="testi-grid">
+            <div class="testi-card fade-in">
+                <div class="testi-stars">★★★★★</div>
+                <p>"The quality is incredible. I ordered the silk wrap dress and it fits perfectly. Everyone at the party asked where I got it!"</p>
+                <div class="testi-name">Chioma Eze</div>
+                <div class="testi-from">Lagos, Nigeria</div>
+            </div>
+            <div class="testi-card fade-in">
+                <div class="testi-stars">★★★★★</div>
+                <p>"Fast delivery, beautiful packaging, and the clothes look exactly like the photos. This is my go-to store now."</p>
+                <div class="testi-name">Fatima Aliyu</div>
+                <div class="testi-from">Abuja, Nigeria</div>
+            </div>
+            <div class="testi-card fade-in">
+                <div class="testi-stars">★★★★★</div>
+                <p>"I've ordered 5 times and I've never been disappointed. The fabric quality is unmatched at this price point."</p>
+                <div class="testi-name">Aisha Bello</div>
+                <div class="testi-from">Port Harcourt, Nigeria</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INSTAGRAM -->
+    <section class="ig-section">
+        <div class="section-tag">@maison.fashion</div>
+        <div class="section-title">Follow Us on Instagram</div>
+        <div class="ig-grid">
+            <div class="ig-item fade-in"><img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=400&q=80" alt="IG"></div>
+            <div class="ig-item fade-in"><img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=80" alt="IG"></div>
+            <div class="ig-item fade-in"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80" alt="IG"></div>
+            <div class="ig-item fade-in"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80" alt="IG"></div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <div class="newsletter">
+        <h3>Stay in Style</h3>
+        <p>Subscribe for new arrivals, exclusive offers, and style inspiration.</p>
+        <div class="newsletter-form">
+            <input type="email" placeholder="Your email address">
+            <button>Subscribe</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 MAISON Fashion Boutique. All rights reserved.</p>
+    </footer>
+
+    <!-- BUILT BY NOVACRAFT -->
+    <div class="novacraft-banner">
+        <p>💼 Built by <a href="https://novacraft-portfolio.vercel.app/" target="_blank">NovaCraft</a> — Need a website like this?</p>
+        <a href="https://wa.me/2347046855205?text=Hi%2C%20I%20saw%20the%20Fashion%20store%20demo%20and%20I%20want%20one%20like%20it" class="novacraft-btn" target="_blank">Get Yours →</a>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                const t = document.querySelector(a.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
