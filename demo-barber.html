@@ -1,6 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
+    <script>
+    (function(){
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        function apply(){ document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark'); }
+        apply();
+        mq.addEventListener('change', apply);
+        document.addEventListener('visibilitychange', function(){ if(!document.hidden) apply(); });
+        window.addEventListener('pageshow', apply);
+        window.addEventListener('focus', apply);
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blade & Style Barbershop | Premium Grooming</title>
@@ -309,6 +320,30 @@
         /* SCROLL PROGRESS */
         .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #c9a84c, #e4c76b); z-index: 200; transition: width 0.1s; width: 0%; }
 
+        /* THEME TOGGLE */
+        .theme-toggle {
+            background: none; border: 1px solid rgba(255,255,255,0.15); border-radius: 50%;
+            width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 1rem; padding: 0; transition: all 0.3s; color: #fff;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.1); }
+
+        /* LIGHT MODE */
+        [data-theme="light"] { --bg: #fafafa; --card: #ffffff; --card-border: rgba(0,0,0,0.08); --text: #1a1a1a; --text-dim: #666666; --text-mid: #444444; }
+        [data-theme="light"] nav { background: rgba(250,250,250,0.92); border-bottom-color: rgba(0,0,0,0.08); }
+        [data-theme="light"] .logo span { color: var(--text); }
+        [data-theme="light"] .nav-cta { color: #000; }
+        [data-theme="light"] .hero { background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 50%, #f5f5f5 100%); }
+        [data-theme="light"] .theme-toggle { border-color: rgba(0,0,0,0.15); color: #1a1a1a; }
+        [data-theme="light"] .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+        [data-theme="light"] .booking-detail .text strong { color: #1a1a1a; }
+        [data-theme="light"] .form-group input,
+        [data-theme="light"] .form-group select,
+        [data-theme="light"] .form-group textarea {
+            background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.1); color: #1a1a1a;
+        }
+        [data-theme="light"] .form-group select option { background: #fff; }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .hero { flex-direction: column; padding: 120px 5% 60px; gap: 40px; }
@@ -324,6 +359,7 @@
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme" style="position:fixed;top:20px;right:80px;z-index:101;width:40px;height:40px;border-radius:50%;border:1px solid rgba(128,128,128,0.2);background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;">🌙</button>
     <div class="scroll-progress" id="scrollProgress"></div>
 
     <nav>
@@ -353,7 +389,7 @@
             </div>
         </div>
         <div class="hero-img">
-            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&q=80" alt="Premium Barbershop">
+            <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80" alt="Premium Barbershop">
             <div class="hero-float">
                 <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="#c9a84c"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                 <div class="text">
@@ -419,7 +455,7 @@
             <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=500&q=80" alt="Fresh fade"></div>
             <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=500&q=80" alt="Barbershop"></div>
             <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=500&q=80" alt="Beard trim"></div>
-            <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1593702288056-7927b442d1fa?w=500&q=80" alt="Classic cut"></div>
+            <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80" alt="Classic cut"></div>
             <div class="gallery-item fade-in"><img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=500&q=80" alt="Barber tools"></div>
         </div>
     </section>
@@ -623,6 +659,36 @@
             const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
             document.querySelector('.scroll-progress').style.width = pct + '%';
         });
+    </script>
+
+    <script>
+    // ===== THEME =====
+    function getPreferredTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    function applyTheme(t) {
+        document.documentElement.setAttribute('data-theme', t);
+        const btn = document.getElementById('themeToggle');
+        if (btn) btn.textContent = t === 'dark' ? '🌙' : '☀️';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', next);
+        applyTheme(next);
+    }
+    applyTheme(getPreferredTheme());
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (!localStorage.getItem('theme')) applyTheme(getPreferredTheme());
+    });
+    window.addEventListener('pageshow', () => {
+        if (!localStorage.getItem('theme')) applyTheme(getPreferredTheme());
+    });
     </script>
 
 </body>

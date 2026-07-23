@@ -1,6 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
+    <script>
+    (function(){
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        function apply(){ document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark'); }
+        apply();
+        mq.addEventListener('change', apply);
+        document.addEventListener('visibilitychange', function(){ if(!document.hidden) apply(); });
+        window.addEventListener('pageshow', apply);
+        window.addEventListener('focus', apply);
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAISON — Premium Fashion Boutique</title>
@@ -105,6 +116,31 @@
         .fade-in{opacity:0;transform:translateY(24px);transition:all 0.7s cubic-bezier(0.16,1,0.3,1);}
         .fade-in.visible{opacity:1;transform:translateY(0);}
 
+        /* THEME TOGGLE */
+        .theme-toggle {
+            background: none; border: 1px solid rgba(0,0,0,0.12); border-radius: 50%;
+            width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 1rem; padding: 0; transition: all 0.3s; color: #1a1a1a;
+        }
+        .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+
+        /* DARK MODE */
+        [data-theme="dark"] { --bg: #111111; --card: #1a1a1a; --dark: #ffffff; --text: #e5e5e5; --dim: #999999; --border: rgba(255,255,255,0.08); }
+        [data-theme="dark"] nav { background: rgba(17,17,17,0.92); }
+        [data-theme="dark"] .hamburger span { background: #e5e5e5; }
+        [data-theme="dark"] .theme-toggle { border-color: rgba(255,255,255,0.15); color: #fff; }
+        [data-theme="dark"] .theme-toggle:hover { background: rgba(255,255,255,0.1); }
+        [data-theme="dark"] .hero { background: linear-gradient(135deg, #1a1a1a, #222); }
+        [data-theme="dark"] .hero::after { background: radial-gradient(circle, rgba(139,115,85,0.1), transparent 70%); }
+        [data-theme="dark"] .cat-btn { border-color: rgba(255,255,255,0.1); color: #e5e5e5; }
+        [data-theme="dark"] .cat-btn:hover, [data-theme="dark"] .cat-btn.active { background: #fff; color: #111; border-color: #fff; }
+        [data-theme="dark"] .product-badge { background: #fff; color: #111; }
+        [data-theme="dark"] .product-quick { background: rgba(26,26,26,0.95); }
+        [data-theme="dark"] .featured-section { background: #1a1a1a; }
+        [data-theme="dark"] .newsletter { background: #1a1a1a; }
+        [data-theme="dark"] .newsletter-form input { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.08); color: #e5e5e5; }
+        [data-theme="dark"] .newsletter-form button { background: #fff; color: #111; }
+
         @media(max-width:768px){
             .hero{flex-direction:column;padding:120px 5% 60px;text-align:center;}
             .hero-img{position:relative;right:auto;top:auto;transform:none;width:100%;margin-top:40px;}
@@ -119,6 +155,7 @@
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme" style="position:fixed;top:20px;right:80px;z-index:101;width:40px;height:40px;border-radius:50%;border:1px solid rgba(128,128,128,0.2);background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;">☀️</button>
 
     <nav>
         <div class="logo">Maison</div>
@@ -225,7 +262,7 @@
             </div>
             <div class="product-card fade-in">
                 <div class="product-img">
-                    <img src="https://images.unsplash.com/photo-1585487000160-6ebcfceb0d44?w=500&q=80" alt="Jewelry">
+                    <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80" alt="Jewelry">
                     <div class="product-badge">Popular</div>
                     <div class="product-quick">Quick View</div>
                 </div>
@@ -360,6 +397,36 @@
                 btn.classList.add('active');
             });
         });
+    </script>
+
+    <script>
+    // ===== THEME =====
+    function getPreferredTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    function applyTheme(t) {
+        document.documentElement.setAttribute('data-theme', t);
+        const btn = document.getElementById('themeToggle');
+        if (btn) btn.textContent = t === 'dark' ? '🌙' : '☀️';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', next);
+        applyTheme(next);
+    }
+    applyTheme(getPreferredTheme());
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (!localStorage.getItem('theme')) applyTheme(getPreferredTheme());
+    });
+    window.addEventListener('pageshow', () => {
+        if (!localStorage.getItem('theme')) applyTheme(getPreferredTheme());
+    });
     </script>
 
 </body>
